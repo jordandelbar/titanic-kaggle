@@ -1,0 +1,80 @@
+# package name
+package_name: titanic_model
+
+# data files
+training_data: train.csv
+testing_data: test.csv
+
+# variables
+# target
+target: Survived
+
+# features
+features:
+  - 'PassengerId'
+  - 'Pclass'
+  - 'Name'
+  - 'Sex'
+  - 'Age'
+  - 'SibSp'
+  - 'Parch'
+  - 'Ticket'
+  - 'Fare'
+  - 'Cabin'
+  - 'Embarked'
+
+# model info
+model_name: titanic_model
+pipeline_save_file: titanic_model_pipe_v
+
+# train/test split
+test_size: 0.2
+
+# random seed for reproducibility
+random_state: 42
+
+# feature engineering
+features_to_drop:
+  - 'PassengerId'
+  - 'Name'
+  - 'SibSp'
+  - 'Parch'
+  - 'Ticket'
+  - 'Cabin'
+
+categorical_vars:
+  - 'Pclass'
+  - 'Sex'
+  - 'Embarked'
+
+numerical_vars:
+  - Age
+  - Fare
+
+vars_with_na:
+  - Age
+  - Embarked
+  - Cabin
+  - Fare
+
+cat_to_impute_frequent:
+  - 'Embarked'
+
+cat_to_impute_missing:
+  - 'title'
+
+num_to_impute:
+  - 'Age'
+  - 'Fare'
+
+rare_label_to_group:
+  - 'title'
+
+target_label_encoding:
+  - 'Pclass'
+  - 'Sex'
+  - 'Embarked'
+  - 'title'
+
+feature_to_scale:
+  - 'Fare'

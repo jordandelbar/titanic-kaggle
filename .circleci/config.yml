@@ -1,0 +1,74 @@
+version: 2.1
+
+general:
+  branches:
+    only:
+      - main
+
+defaults: &defaults
+  docker:
+    - image: circleci/python:3.9.5
+  working_directory: ~/titanic_model
+
+prepare_venv: &prepare_venv
+  run:
+    name: Create venv
+    command: |
+      python3 -m venv venv
+      source venv/bin/activate
+      pip install --upgrade pip
+prepare_tox: &prepare_tox
+  run:
+    name: Install tox
+    command: |
+      sudo pip install --upgrade pip
+      pip install --user tox
+fetch_data: &fetch_data
+  run:
+    name: Set script permissions and fetch data
+    command: |
+      source venv/bin/activate
+      chmod +x ./scripts/get_datasets.sh
+      ./scripts/get_datasets.sh
+jobs:
+  test_package:
+    <<: *defaults
+    working_directory: ~/titanic_model
+    steps:
+      - checkout:
+          path: ~/titanic_model
+      - *prepare_tox
+      - run:
+          name: Runnning app tests
+          command: |
+            tox
+  upload_model:
+    <<: *defaults
+    working_directory: ~/titanic_model
+    steps:
+      - checkout:
+          path: ~/titanic_model
+      - *prepare_tox
+      - run:
+          name: Fetch the data
+          command: |
+            tox -e fetch_data
+      - run:
+          name: Publish model to Gemfury
+          command: |
+            tox -e publish_model
+workflows:
+  version: 2.1
+  section:
+    jobs:
+      - test_package:
+          filters:
+            branches:
+              only:
+                - main
+      - upload_model:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/

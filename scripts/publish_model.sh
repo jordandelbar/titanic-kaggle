@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Building packages and uploading them to a Gemfury repository
+
+GEMFURY_URL=$GEMFURY_PUSH_URL
+
+BASE_DIR=$(pwd)
+SETUP="setup.py"
+
+warn() {
+    echo "$@" 1>&2
+}
+
+die() {
+    warn "$@"
+    exit 1
+}
+
+build() {
+    echo "Checking directory $DIR"
+    cd "$BASE_DIR"
+    [ ! -e $SETUP ] && warn "No $SETUP file, skipping" && return
+    PACKAGE_NAME=$(python $SETUP --fullname)
+    echo "Package $PACKAGE_NAME"
+    python "$SETUP" bdist_wheel || die "Building package $PACKAGE_NAME failed"
+    for X in $(ls dist)
+    do
+        curl -F package=@"dist/$X" $GEMFURY_URL || die "Uploading package $PACKAGE_NAME failed on file dist/$X"
+    done
+}
+
+build
