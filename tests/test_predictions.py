@@ -2,6 +2,7 @@ import numpy as np
 from titanic_model import __version__ as _version
 from titanic_model.processing.data_manager import (load_dataset,
                                                    load_pipeline)
+from titanic_model.predict import make_prediction
 from titanic_model.config.core import config
 
 
@@ -38,10 +39,9 @@ def test_if_any_null_before_pred():
 
 def test_prediction():
 
-    pipeline_file_name = f"{config.app_config.pipeline_save_file}{_version}.pkl"
-    _titanic_pipe = load_pipeline(file_name=pipeline_file_name)
     test_dataset = load_dataset(file_name=config.app_config.testing_data)
 
-    results = _titanic_pipe.predict(test_dataset)
+    results = make_prediction(test_dataset)
 
-    assert results.size != 0
+    assert len(results["predictions"]) == test_dataset.shape[0]
+    assert type(results["predictions"][0]) == np.float64
