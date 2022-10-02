@@ -23,8 +23,21 @@ jobs:
         source venv/bin/activate
         pip install --upgrade pip
         pip install tox
-        tox -e publish_model
+        tox
+    - name: Fetch data
+      run: |
+        source venv/bin/activate
+        tox -e fetch_data
       env:
         KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
         KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+    - name: Train model
+      run: |
+        source venv/bin/activate
+        tox -e train_model
+    - name: Publish model
+      run: |
+        source venv/bin/activate
+        tox -e publish_model
+      env:
         GEMFURY_PUSH_URL: ${{ secrets.GEMFURY_PUSH_URL }}
