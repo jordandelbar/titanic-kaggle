@@ -34,12 +34,10 @@ jobs:
     - name: Train model
       run: |
         source venv/bin/activate
-        tox -e fetch_data
+        tox -e train_model
     - name: Publish model
       run: |
         source venv/bin/activate
         tox -e publish_model
       env:
-        KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-        KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
         GEMFURY_PUSH_URL: ${{ secrets.GEMFURY_PUSH_URL }}
