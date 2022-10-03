@@ -50,8 +50,11 @@ Then you can install [tox](https://tox.wiki/en/latest/index.html#) by running:
 ```
 pip install tox
 ```
-The different steps explained in the description are then performed by different tox commands.
-But first you need to set up three `environment variables`:
+The different steps explained in the description are then performed by different `tox` commands.
+First you need to set up three `environment variables`
+
+### :seedling: Environment variables
+
 ```
 export KAGGLE_USERNAME=your-kaggle-username
 export KAGGLE_KEY=your-kaggle-key
@@ -61,4 +64,19 @@ For the record, here is the format of you Gemfury URL:
 ```
 https://TOKEN@push.fury.io/your-profile-name/
 ```
-For the Kaggle credentials you can also download a `kaggle.json` file from your profile that you can put in a `~/.kaggle` directory.
+For the Kaggle credentials you can also download a `kaggle.json` file from your profile that you can put in your `~/.kaggle` directory.
+
+### :bookmark_tabs: Tox commands
+
+* To fetch the data run:
+```
+tox -e fetch_data
+```
+* To train the model & run the tests run:
+```
+tox -e train_model
+```
+* To package & publish the model:
+```
+tox -e publish_model
+```
