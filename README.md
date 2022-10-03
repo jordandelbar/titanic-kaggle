@@ -9,14 +9,14 @@ Just having fun with the [Titanic Kaggle competition](https://www.kaggle.com/com
 
 The model aims to predict the survival probability of the Titanic passengers.
 
-Using GitHub Actions, the model is then uploaded on [Gemfury](https://fury.co/) to be latter used by a web service app.
+Using GitHub Actions, the model is then uploaded to [Gemfury](https://fury.co/) to be latter used by a web service app.
 
 There are four steps for this repo:
 
-* Fetch the data: we download the Titanic competition data from [Kaggle](https://www.kaggle.com/).
-* Train the model: we then train the model to prediction survivability of the different passengers.
-* Test the model: we run several unit tests to ensure the model is predicting the way we want.
-* Build & publish the model: we then build a Python package that we publish on a private repository in Gemfury.
+* <u>Fetch the data</u>: we download the Titanic competition data from [Kaggle](https://www.kaggle.com/).
+* <u>Train the model</u>: we then train the model to prediction survivability of the different passengers.
+* <u>Test the model</u>: we run several unit tests to ensure the model is predicting the way we want.
+* <u>Build & publish the model</u>: we then build a Python package that we publish on a private repository in Gemfury.
 
 ## :computer: How to run it locally
 
