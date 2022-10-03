@@ -41,3 +41,4 @@ jobs:
         tox -e publish_model
       env:
         GEMFURY_PUSH_URL: ${{ secrets.GEMFURY_PUSH_URL }}
+      if: github.ref == 'refs/heads/main'
