@@ -1,9 +1,8 @@
 from pathlib import Path
 
 import pandas as pd
-
-from zenml.steps import Output, step
 from sklearn.model_selection import train_test_split
+from zenml.steps import Output, step
 
 
 @step
