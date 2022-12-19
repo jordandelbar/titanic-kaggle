@@ -1,7 +1,10 @@
+from zenml.config import DockerSettings
 from zenml.pipelines import pipeline
 
+docker_settings = DockerSettings(replicate_local_python_environment="pip_freeze")
 
-@pipeline(enable_cache=False)
+
+@pipeline(enable_cache=False, settings={"docker": docker_settings})
 def training_pipeline(loader, splitter, trainer, evaluator):
     # Link all the steps artifacts together
     train, target, test = loader()
