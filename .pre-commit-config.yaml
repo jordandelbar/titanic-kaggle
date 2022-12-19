@@ -13,9 +13,20 @@ repos:
   hooks:
   - id: black
     args: [--config, pyproject.toml]
+    files: \.py$
 
 - repo: https://github.com/pycqa/isort
   rev: 5.11.3
   hooks:
   - id: isort
     args: [--settings-path, pyproject.toml]
+    files: \.py$
+
+- repo: https://github.com/pycqa/autoflake
+  rev: v2.0.0
+  hooks:
+  - id: autoflake
+    name: Remove unused variables and imports
+    language: python
+    args: ["--in-place", "--remove-all-unused-imports", "--remove-unused-variables", "--expand-star-imports", "--ignore-init-module-imports"]
+    files: \.py$
