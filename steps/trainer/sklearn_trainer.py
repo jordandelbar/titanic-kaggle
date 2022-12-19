@@ -11,7 +11,7 @@ from processing.features import preprocessing
 
 
 @step
-def trainer(X_train: pd.DataFrame, y_train: pd.Series) -> Output(clf=Pipeline):
+def trainer(X_train: pd.DataFrame, y_train: pd.Series) -> Output(clf_pipeline=Pipeline):
     """Train the model on the training dataframe"""
 
     titanic_pipeline = Pipeline(
