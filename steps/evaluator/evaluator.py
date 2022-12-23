@@ -1,5 +1,6 @@
 from typing import Dict
 
+import mlflow
 import pandas as pd
 from sklearn.metrics import (
     accuracy_score,
@@ -9,10 +10,22 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from sklearn.pipeline import Pipeline
+from zenml.client import Client
+from zenml.integrations.mlflow.experiment_trackers import MLFlowExperimentTracker
 from zenml.steps import Output, step
 
+experiment_tracker = Client().active_stack.experiment_tracker
 
-@step
+if not experiment_tracker or not isinstance(
+    experiment_tracker, MLFlowExperimentTracker
+):
+    raise RuntimeError(
+        "Your active stack needs to contain a MLFlow experiment tracker for "
+        "this example to work."
+    )
+
+
+@step(experiment_tracker=experiment_tracker.name)
 def model_evaluator(
     clf_pipeline: Pipeline, X_test: pd.DataFrame, y_test: pd.Series
 ) -> Output(metrics=Dict):
@@ -28,6 +41,5 @@ def model_evaluator(
         "accuracy": accuracy_score(y_true=y_test, y_pred=y_predict),
         "roc auc score": roc_auc_score(y_true=y_test, y_score=y_predict_proba),
     }
-
-    print(metrics)
+    mlflow.log_metrics(metrics=metrics)
     return metrics
