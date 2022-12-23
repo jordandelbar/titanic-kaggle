@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-from titanic_model.config.core import config
+
+# FIXME: use a config
+features_to_drop = ["PassengerId", "Name", "SibSp", "Parch", "Ticket", "Cabin"]
 
 
 class preprocessing(BaseEstimator, TransformerMixin):
@@ -17,18 +19,18 @@ class preprocessing(BaseEstimator, TransformerMixin):
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         X = X.copy()
         # is the passenger a baby
-        X['is_baby'] = np.where(X['Age'] < 5, 1, 0)
+        X["is_baby"] = np.where(X["Age"] < 5, 1, 0)
         # was the passenger travelling alone
-        X['alone'] = np.where((X['SibSp'] == 0) & (X['Parch'] == 0), 1, 0)
+        X["alone"] = np.where((X["SibSp"] == 0) & (X["Parch"] == 0), 1, 0)
         # family member total
-        X['family'] = X['SibSp'] + X['Parch']
+        X["family"] = X["SibSp"] + X["Parch"]
         # create a title column
-        X['title'] = X['Name'].str.extract(' ([A-Za-z]+)\.', expand=False)
-        X['title'] = X['title'].replace('Mlle', 'Miss')
-        X['title'] = X['title'].replace('Ms', 'Miss')
-        X['title'] = X['title'].replace('Mme', 'Mrs')
-        X['title'] = X['title'].replace('Don', 'Mr')
-        X['title'] = X['title'].replace('Dona', 'Mrs')
+        X["title"] = X["Name"].str.extract(" ([A-Za-z]+)\.", expand=False)
+        X["title"] = X["title"].replace("Mlle", "Miss")
+        X["title"] = X["title"].replace("Ms", "Miss")
+        X["title"] = X["title"].replace("Mme", "Mrs")
+        X["title"] = X["title"].replace("Don", "Mr")
+        X["title"] = X["title"].replace("Dona", "Mrs")
         # drop features not useful anymore
-        X.drop(config.model_config.features_to_drop, axis=1, inplace=True)
+        X.drop(features_to_drop, axis=1, inplace=True)
         return X

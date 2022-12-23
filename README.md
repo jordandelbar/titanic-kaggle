@@ -5,39 +5,138 @@
 
 ## :memo: Description
 
-Just having fun with the [Titanic Kaggle competition](https://www.kaggle.com/competitions/titanic)!
+Just having fun with the [Titanic Kaggle competition]!
 
-The model aims to predict the survival probability of the Titanic passengers.
+Using [ZenML] we aim to train a model about the probability of survival for the Titanic passengers and then upload that model on a [Mlflow] instance. If you wish to run your own Mlflow instance on [Heroku] you can check this [repo](https://github.com/jordandelbar/mlflow-heroku).
 
-Using GitHub Actions, the model is then uploaded to [Gemfury](https://fury.co/) to be latter used by a web service app.
+Here's the workflow of our pipeline:
 
-There are four steps for this repo:
+```mermaid
+flowchart LR
 
-* <u>Fetch the data</u>: we download the Titanic competition data from [Kaggle](https://www.kaggle.com/).
-* <u>Train the model</u>: we then train the model to predict the survivability of the different passengers.
-* <u>Test the model</u>: we run several unit tests to ensure the model is predicting the way we want.
-* <u>Build & publish the model</u>: we then build a Python package that we publish on a private repository in Gemfury.
+%% Flow definitions
+fetch_data_kaggle([Fetch Kaggle Data])
+loader([Load Data])
+splitter([Split Data])
+trainer([Train Model])
+evaluator([Evaluate Model])
+
+%% Data definitions
+raw_data[(raw data)]
+train[(train)]
+target[(target)]
+test[(test)]
+X_train[(X_train)]
+X_test[(X_test)]
+y_train[(y_train)]
+y_test[(y_test)]
+
+%% artifacts definitions
+trained_model{{Trained<br>Model}}
+metrics{{Metrics}}
+
+%% Server definitions
+mlflow(MLflow<br>Server)
+
+%% Flow relationships
+fetch_data_kaggle --> loader
+loader --> splitter
+splitter --> trainer
+trainer --> evaluator
+
+%% Data relationships
+fetch_data_kaggle .-> raw_data
+raw_data .-> loader
+loader .-> train
+loader .-> target
+loader .-> test
+train .-> splitter
+target .-> splitter
+splitter .-> X_train
+splitter .-> X_test
+splitter .-> y_train
+splitter .-> y_test
+X_train .-> trainer
+y_train .-> trainer
+X_test .-> evaluator
+y_test .-> evaluator
+
+%% Artifacts relationships
+trainer .-> trained_model
+evaluator .-> metrics
+
+trained_model -.- mlflow
+metrics -.- mlflow
+
+%% Color definitions
+classDef step fill:#009EAC,stroke:#333,stroke-width:2px;
+classDef data fill:#223848,stroke:#3F5A6C;
+classDef artifact fill:#615E9C;
+classDef server fill:#E0446D;
+
+%% Colors
+    %% Steps
+    class fetch_data_kaggle step;
+    class loader step;
+    class splitter step;
+    class trainer step;
+    class evaluator step;
+
+    %% Data
+    class raw_data data;
+    class train data;
+    class target data;
+    class test data;
+    class X_train data;
+    class X_test data;
+    class y_train data;
+    class y_test data;
+
+    %% Artifacts
+    class target_definition artifact
+    class trained_model artifact
+    class metrics artifact
+
+    %% Server
+    class mlflow server
+```
 
 ## :computer: How to run it locally
 
-I ran this code using `python 3.10.7`. To install it on your computer and manage several versions of python I recommend using [pyenv](https://github.com/pyenv/pyenv).
+First thing first `git clone` this repo on your local machine:
+```
+git clone git@github.com:jordandelbar/titanic-model.git
+```
+or with https:
+```
+git glone https://github.com/jordandelbar/titanic-model.git
+```
 
-You can check this [tutorial](https://realpython.com/intro-to-pyenv/) over pyenv.
+### :globe_with_meridians: Setting up your python virtual environment
+
+I ran this code using `python 3.10.7`. To install it on your computer and manage several versions of python I recommend using [pyenv].
+
+You can check this [tutorial](https://realpython.com/intro-to-pyenv/) over pyenv. Pyenv is only available for Linux & MacOS so look for [miniconda] if you have a Windows OS (this tutorial assume you are on Linux or MacOS).
 
 Once the installation process is over, simply run:
 
-```
+```bash
 pyenv install 3.10.7
 ```
 
-Then use the `global` command to make it available anywhere on you machine:
-
+You can then create a virtual environment running
+```bash
+pyenv virtualenv 3.10.7 <name-of-your-venv>
 ```
-pyenv global 3.10.7
+
+You can use the pyenv `local` command to set up a `.python-version` file in this directory so that pyenv
+automatically activate the virtual environment when entering this folder by running:
+
+```bash
+pyenv local <name-of-your-venv>
 ```
 
-You can then use the `venv` python virtual environment function to create a `venv` in this folder:
-
+Or you can either use the python built-in virtual environment function and run:
 ```bash
 python -m venv .venv/<name-of-your-venv>
 ```
@@ -45,46 +144,91 @@ python -m venv .venv/<name-of-your-venv>
 That you can activate using:
 ```bash
 source .venv/<name-of-your-venv>/bin/activate
-```
-
-Or you can use the pyenv `local` command to set up a `.python-version` file in this directory so that pyenv
-automatically activate the virtual environment when entering this folder by running:
-
 ```bash
-pyenv local <name-of-your-venv>
+source .venv/<name-of-your-venv>/bin/activate
 ```
+### :package: Install the different dependencies
 
-Then you can install [tox](https://tox.wiki/en/latest/index.html#) by running:
+Once your virtual environment is set up you can simply run:
+```bash
+bash scripts/install_dependencies.sh
 ```
-pip install tox
-```
-The different steps explained in the description are then performed by different `tox` commands.
-First you need to set up three `environment variables`
+To install the different dependencies needed to run the project.
 
 ### :seedling: Environment variables
 
+You will also need several environment variables to run this project:
+- a `KAGGLE_USERNAME` and a `KAGGLE_KEY` to download the titanic competition dataset.
+- a `ZENML_SERVER_URL`, `ZENML_USERNAME` and `ZENML_PASSWORD` to connect to a running instance of Zenml
+
+You can gather all these environment variables in a `.env` file in the root directory of this repo.
+
+```bash
+KAGGLE_USERNAME=<your-kaggle-username>
+KAGGLE_KEY=<your-kaggle-key>
+ZENML_SERVER_URL=<your-zenml-server-url>
+ZENML_USERNAME=<your-zenml-server-username>
+ZENML_PASSWORD=<your-zenml-server-password>
+PYTHONPATH=.
 ```
-export KAGGLE_USERNAME=your-kaggle-username
-export KAGGLE_KEY=your-kaggle-key
-export GEMFURY_PUSH_URL=your-gemfury-url
+
+Check-out the `dotenv` pluggin for [oh-my-zsh] to easily load your environment variables.
+
+You can also source them by running:
+```bash
+export $(grep -v '^#' .env | xargs)
 ```
-For the record, here is the format of you Gemfury URL:
-```
-https://TOKEN@push.fury.io/your-profile-name/
-```
+
 For the Kaggle credentials you can also download a `kaggle.json` file from your profile that you can put in your `~/.kaggle` directory.
 
-### :bookmark_tabs: Tox commands
+### :shinto_shrine: Spin up your ZenML server
 
-* To fetch the data run:
+You can run:
+```bash
+zenml up --docker
 ```
-tox -e fetch_data
+
+to spin up a ZenML server on your local machine and then connect to it by running:
+
+```bash
+zenml connect --url=$ZENML_SERVER_URL --username=$ZENML_USERNAME --password=$ZENML_PASSWORD
 ```
-* To train the model & run the tests run:
+
+Once connected to your ZenML server you will have to register a new experiment-tracker component and a new [stack](https://docs.zenml.io/starter-guide/stacks).
+In order to do so run:
+
+```bash
+zenml experiment-tracker register <your-experiment-tracker-component-name> \
+ --flavor=mlflow --tracking_uri=<mflow-instance-url> \
+ --tracking_username=<mlflow-username> \
+ --tracking_password=<mlflow-password>
 ```
-tox -e train_model
+```bash
+zenml stack register <your-new-stack-name> -o default -a default -e <your-experiment-tracker-component-name>
 ```
-* To package & publish the model:
+
+You can then activate that stack by running:
+```bash
+zenml stack set <your-new-stack-name>
 ```
-tox -e publish_model
+
+### :alembic: Run the pipeline
+
+Finally, to run the pipeline you first need to download the dataset:
+```bash
+bash scripts/get_dataset.sh
 ```
+
+Then you can launch the training pipeline by running:
+```bash
+python titanic_model/run_training_pipeline.py
+```
+
+<!-- References -->
+[Titanic Kaggle competition]: https://www.kaggle.com/competitions/titanic
+[ZenML]: https://docs.zenml.io/getting-started/introduction
+[Mlflow]: https://mlflow.org/
+[Heroku]: https://www.heroku.com
+[pyenv]: https://github.com/pyenv/pyenv
+[miniconda]: https://docs.conda.io/en/latest/miniconda.html
+[oh-my-zsh]: https://ohmyz.sh/
