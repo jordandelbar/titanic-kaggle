@@ -144,6 +144,8 @@ python -m venv .venv/<name-of-your-venv>
 That you can activate using:
 ```bash
 source .venv/<name-of-your-venv>/bin/activate
+```bash
+source .venv/<name-of-your-venv>/bin/activate
 ```
 ### :package: Install the different dependencies
 
