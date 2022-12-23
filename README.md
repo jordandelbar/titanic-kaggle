@@ -14,7 +14,7 @@ Using GitHub Actions, the model is then uploaded to [Gemfury](https://fury.co/) 
 There are four steps for this repo:
 
 * <u>Fetch the data</u>: we download the Titanic competition data from [Kaggle](https://www.kaggle.com/).
-* <u>Train the model</u>: we then train the model to prediction survivability of the different passengers.
+* <u>Train the model</u>: we then train the model to predict the survivability of the different passengers.
 * <u>Test the model</u>: we run several unit tests to ensure the model is predicting the way we want.
 * <u>Build & publish the model</u>: we then build a Python package that we publish on a private repository in Gemfury.
 
@@ -38,14 +38,22 @@ pyenv global 3.10.7
 
 You can then use the `venv` python virtual environment function to create a `venv` in this folder:
 
-```
-python -m venv .venv/name-of-your-venv
+```bash
+python -m venv .venv/<name-of-your-venv>
 ```
 
 That you can activate using:
+```bash
+source .venv/<name-of-your-venv>/bin/activate
 ```
-source .venv/name-of-your-venv/bin/activate
+
+Or you can use the pyenv `local` command to set up a `.python-version` file in this directory so that pyenv
+automatically activate the virtual environment when entering this folder by running:
+
+```bash
+pyenv local <name-of-your-venv>
 ```
+
 Then you can install [tox](https://tox.wiki/en/latest/index.html#) by running:
 ```
 pip install tox
