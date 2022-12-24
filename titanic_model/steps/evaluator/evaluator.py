@@ -12,6 +12,9 @@ from sklearn.metrics import (
 from sklearn.pipeline import Pipeline
 from zenml.client import Client
 from zenml.integrations.mlflow.experiment_trackers import MLFlowExperimentTracker
+from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
+    MLFlowExperimentTrackerSettings,
+)
 from zenml.steps import Output, step
 
 experiment_tracker = Client().active_stack.experiment_tracker
@@ -24,8 +27,15 @@ if not experiment_tracker or not isinstance(
         "this example to work."
     )
 
+mlflow_settings = MLFlowExperimentTrackerSettings(
+    experiment_name="titanic_training_pipeline"
+)
 
-@step(experiment_tracker=experiment_tracker.name)
+
+@step(
+    experiment_tracker=experiment_tracker.name,
+    settings={"experiment_tracker.mlflow": mlflow_settings},
+)
 def model_evaluator(
     clf_pipeline: Pipeline, X_test: pd.DataFrame, y_test: pd.Series
 ) -> Output(metrics=Dict):
