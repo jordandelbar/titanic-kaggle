@@ -6,10 +6,15 @@ from steps.splitter.sklearn_data_splitter import data_splitter
 from steps.trainer.sklearn_trainer import trainer
 
 run = training_pipeline(
+    # Load the data
     loader=data_loader(),
+    # Split the data in train and test dataset
     splitter=data_splitter(),
+    # Train the model
     trainer=trainer(),
+    # Evaluate the model
     evaluator=model_evaluator(),
+    # Register the model
     register=model_register(),
 )
 

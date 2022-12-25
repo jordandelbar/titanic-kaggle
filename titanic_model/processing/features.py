@@ -7,7 +7,12 @@ features_to_drop = ["PassengerId", "Name", "SibSp", "Parch", "Ticket", "Cabin"]
 
 
 class preprocessing(BaseEstimator, TransformerMixin):
-    """class to preprocess data and clean it"""
+    """Class to preprocess data and clean it
+
+    Args:
+        BaseEstimator (_type_): Base class for all estimators in scikit-learn
+        TransformerMixin (_type_): Mixin class for all transformers in scikit-learn
+    """
 
     def __init__(self):
         pass

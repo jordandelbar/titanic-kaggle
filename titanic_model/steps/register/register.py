@@ -18,10 +18,7 @@ experiment_tracker = Client().active_stack.experiment_tracker
 if not experiment_tracker or not isinstance(
     experiment_tracker, MLFlowExperimentTracker
 ):
-    raise RuntimeError(
-        "Your active stack needs to contain a MLFlow experiment tracker for "
-        "this example to work."
-    )
+    raise RuntimeError("Your active stack needs to contain a MLFlow experiment tracker")
 
 mlflow_settings = MLFlowExperimentTrackerSettings(
     experiment_name="titanic_training_pipeline"

@@ -22,10 +22,7 @@ experiment_tracker = Client().active_stack.experiment_tracker
 if not experiment_tracker or not isinstance(
     experiment_tracker, MLFlowExperimentTracker
 ):
-    raise RuntimeError(
-        "Your active stack needs to contain a MLFlow experiment tracker for "
-        "this example to work."
-    )
+    raise RuntimeError("Your active stack needs to contain a MLFlow experiment tracker")
 
 mlflow_settings = MLFlowExperimentTrackerSettings(
     experiment_name="titanic_training_pipeline"
@@ -39,7 +36,16 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
 def model_evaluator(
     clf_pipeline: Pipeline, X_test: pd.DataFrame, y_test: pd.Series
 ) -> Output(metrics=Dict):
-    """Evaluate model training"""
+    """Evaluate model training
+
+    Args:
+        clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline
+        X_test (pandas.DataFrame): test dataframe to be used for model evaluation
+        y_test (pandas.Series): target series to be used for model evaluation
+
+    Returns:
+        metrics (dict): dictionnary with the different evaluation metrics
+    """
 
     y_predict_proba = clf_pipeline.predict_proba(X_test)[:, 1]
     y_predict = clf_pipeline.predict(X_test)
