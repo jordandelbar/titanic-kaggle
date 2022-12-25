@@ -20,6 +20,7 @@ loader([Load Data])
 splitter([Split Data])
 trainer([Train Model])
 evaluator([Evaluate Model])
+register([Register Model])
 
 %% Data definitions
 raw_data[(raw data)]
@@ -43,6 +44,7 @@ fetch_data_kaggle --> loader
 loader --> splitter
 splitter --> trainer
 trainer --> evaluator
+evaluator --> register
 
 %% Data relationships
 fetch_data_kaggle .-> raw_data
@@ -64,15 +66,16 @@ y_test .-> evaluator
 %% Artifacts relationships
 trainer .-> trained_model
 evaluator .-> metrics
+register .-> trained_model
 
 trained_model -.- mlflow
 metrics -.- mlflow
 
 %% Color definitions
-classDef step fill:#009EAC,stroke:#333,stroke-width:2px;
-classDef data fill:#223848,stroke:#3F5A6C;
-classDef artifact fill:#615E9C;
-classDef server fill:#E0446D;
+classDef step fill:#009EAC,stroke:#333,stroke-width:2px,color:#fff;
+classDef data fill:#223848,stroke:#3F5A6C,color:#fff;
+classDef artifact fill:#615E9C,color:#fff;
+classDef server fill:#E0446D,color:#fff;
 
 %% Colors
     %% Steps
@@ -81,6 +84,7 @@ classDef server fill:#E0446D;
     class splitter step;
     class trainer step;
     class evaluator step;
+    class register step;
 
     %% Data
     class raw_data data;
@@ -103,7 +107,7 @@ classDef server fill:#E0446D;
 
 ## :computer: How to run it locally
 
-First thing first `git clone` this repo on your local machine:
+First thing first, `git clone` this repo on your local machine:
 ```
 git clone git@github.com:jordandelbar/titanic-model.git
 ```
