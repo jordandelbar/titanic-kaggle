@@ -1,9 +1,9 @@
 from feature_engine.encoding import MeanEncoder, RareLabelEncoder
 from feature_engine.imputation import CategoricalImputer, MeanMedianImputer
 from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from xgboost import XGBClassifier
 
 from titanic_model.processing.features import preprocessing
 
@@ -62,6 +62,6 @@ titanic_pipeline = Pipeline(
                 remainder="passthrough",
             ),
         ),
-        ("clf", RandomForestClassifier()),
+        ("clf", XGBClassifier()),
     ]
 )
