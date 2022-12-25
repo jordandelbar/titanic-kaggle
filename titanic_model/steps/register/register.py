@@ -35,11 +35,17 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
 def model_register(metrics: Dict) -> None:
     """Register the model"""
 
-    if registering_model_decision(
-        model_name="titanic-model",
-        model_accuracy=metrics["accuracy"],
-        model_f1_score=["f1 score"],
-    ):
+    try:
+        if registering_model_decision(
+            model_name="titanic-model",
+            model_accuracy=metrics["accuracy"],
+            model_f1_score=["f1 score"],
+        ):
+            mlflow_active_run = mlflow.active_run()
+            model_uri = "runs:/{}/model".format(mlflow_active_run.info.run_id)
+            mlflow.register_model(model_uri, "titanic-model")
+            promote_models(model_name="titanic-model", metric_to_check="accuracy")
+    except NameError:
         mlflow_active_run = mlflow.active_run()
         model_uri = "runs:/{}/model".format(mlflow_active_run.info.run_id)
         mlflow.register_model(model_uri, "titanic-model")

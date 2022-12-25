@@ -18,9 +18,11 @@ def _get_registered_models(model_name: str) -> Dict:
     """
     client = MlflowClient()
     registered_models = dict()
+    # We record every registered model under a certain name
     for mv in client.search_model_versions(f"name='{model_name}'"):
         registered_models[dict(mv)["version"]] = dict(mv)
 
+    # If there is no model registered under that name we raise an error
     if len(registered_models) == 0:
         raise NameError("no model registered with that name yet")
 
@@ -38,6 +40,8 @@ def _get_metric_list(model_dictionnary: Dict, metric: str) -> List[float]:
         List[float]: list of model metrics
     """
     client = MlflowClient()
+
+    # We retrieve all the specified metrics of a registered model dictionnary
     metrics_list = list()
     for key in model_dictionnary.keys():
         metrics_list.append(
@@ -72,9 +76,15 @@ def _get_best_models_in_mlflow(
         ).data.to_dictionary()["metrics"][metric_to_check]
 
     best_model = sorted(version_metrics, key=version_metrics.get)[-1]
-    second_best_model = sorted(version_metrics, key=version_metrics.get)[-2]
     best_model_value = sorted(version_metrics.values())[-1]
-    second_best_model_value = sorted(version_metrics.values())[-2]
+
+    # Check if there is already a second model else we set it up to 0
+    try:
+        second_best_model = sorted(version_metrics, key=version_metrics.get)[-2]
+        second_best_model_value = sorted(version_metrics.values())[-2]
+    except IndexError:
+        second_best_model = "0"
+        second_best_model_value = 0
 
     return [
         (best_model, best_model_value),
@@ -117,6 +127,10 @@ def registering_model_decision(
             metric="f1 score",
         )
     )
+    # We register a model only if its accurary is better than the second best
+    # model and if its f1 score is better or equal to the mean of f1 score of the
+    # different registered models. This is completely arbitrary but gives an
+    # example and inspiration of the rules engine you can design
     if (
         model_accuracy
         > _get_second_best_model_metric(
@@ -141,21 +155,29 @@ def promote_models(model_name: str, metric_to_check: str) -> None:
     )
     best_models_list = [best_models[0][0], best_models[1][0]]
     client = MlflowClient()
+
+    # The best model is put in production stage
     client.transition_model_version_stage(
         name=model_name,
         version=best_models_list[0],
         stage="Production",
     )
-    client.transition_model_version_stage(
-        name=model_name,
-        version=best_models_list[1],
-        stage="Staging",
-    )
 
+    if best_models_list[1] != "0":
+        # If it exists, the second best model is put in staging
+        client.transition_model_version_stage(
+            name=model_name,
+            version=best_models_list[1],
+            stage="Staging",
+        )
+    # This is completely arbitraty but in this little use case
+    # I don't need to perform integration tests, reason why I use
+    # Staging and Production stages as best model and back-up model
     registered_models = dict()
     for mv in client.search_model_versions(f"name='{model_name}'"):
         registered_models[dict(mv)["version"]] = dict(mv)
 
+    # Every other model is archived
     for model_version in list(
         set(list(registered_models.keys())) - set(best_models_list)
     ):
