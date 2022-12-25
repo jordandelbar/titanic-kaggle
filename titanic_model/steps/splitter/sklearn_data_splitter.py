@@ -11,6 +11,8 @@ def data_splitter(
 ):
     """Split the data into training and testing dataframes"""
 
-    X_train, X_test, y_train, y_test = train_test_split(train, target, test_size=0.33)
+    X_train, X_test, y_train, y_test = train_test_split(
+        train, target, test_size=0.33, random_state=42
+    )  # TODO: in config
 
     return X_train, X_test, y_train, y_test
