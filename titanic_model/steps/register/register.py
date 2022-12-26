@@ -8,6 +8,7 @@ from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
 )
 from zenml.steps import step
 
+from titanic_model.config.core import config
 from titanic_model.mlflow_model_management.mlflow_model_management import (
     promote_models,
     registering_model_decision,
@@ -21,7 +22,7 @@ if not experiment_tracker or not isinstance(
     raise RuntimeError("Your active stack needs to contain a MLFlow experiment tracker")
 
 mlflow_settings = MLFlowExperimentTrackerSettings(
-    experiment_name="titanic_training_pipeline"
+    experiment_name=config.experiment_name
 )
 
 
@@ -34,17 +35,17 @@ def model_register(metrics: Dict) -> None:
 
     try:
         if registering_model_decision(
-            model_name="titanic-model",
+            model_name=config.model_name,
             model_accuracy=metrics["accuracy"],
             model_f1_score=metrics["f1 score"],
         ):
             mlflow_active_run = mlflow.active_run()
             model_uri = "runs:/{}/model".format(mlflow_active_run.info.run_id)
-            mlflow.register_model(model_uri, "titanic-model")
-            promote_models(model_name="titanic-model", metric_to_check="accuracy")
+            mlflow.register_model(model_uri, config.model_name)
+            promote_models(model_name=config.model_name, metric_to_check="accuracy")
     except NameError:
         mlflow_active_run = mlflow.active_run()
         model_uri = "runs:/{}/model".format(mlflow_active_run.info.run_id)
-        mlflow.register_model(model_uri, "titanic-model")
-        promote_models(model_name="titanic-model", metric_to_check="accuracy")
+        mlflow.register_model(model_uri, config.model_name)
+        promote_models(model_name=config.model_name, metric_to_check="accuracy")
     return None

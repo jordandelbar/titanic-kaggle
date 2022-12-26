@@ -3,6 +3,8 @@ from pathlib import Path
 import pandas
 from zenml.steps import Output, step
 
+from titanic_model.config.core import config
+
 
 @step
 def data_loader() -> Output(
@@ -16,10 +18,14 @@ def data_loader() -> Output(
         test (pandas.DataFrame): test data (to return to the Titanic competition).
     """
 
-    train = pandas.read_csv(Path(__file__).resolve().parents[3] / "datasets/train.csv")
-    test = pandas.read_csv(Path(__file__).resolve().parents[3] / "datasets/test.csv")
+    train = pandas.read_csv(
+        Path(__file__).resolve().parents[3] / f"datasets/{config.training_data}"
+    )
+    test = pandas.read_csv(
+        Path(__file__).resolve().parents[3] / f"datasets/{config.testing_data}"
+    )
 
-    target = train["Survived"]
-    train.drop("Survived", axis=1, inplace=True)
+    target = train[config.target]
+    train.drop(config.target, axis=1, inplace=True)
 
     return train, target, test
