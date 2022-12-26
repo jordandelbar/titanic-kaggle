@@ -36,7 +36,7 @@ def model_register(metrics: Dict) -> None:
         if registering_model_decision(
             model_name="titanic-model",
             model_accuracy=metrics["accuracy"],
-            model_f1_score=["f1 score"],
+            model_f1_score=metrics["f1 score"],
         ):
             mlflow_active_run = mlflow.active_run()
             model_uri = "runs:/{}/model".format(mlflow_active_run.info.run_id)
