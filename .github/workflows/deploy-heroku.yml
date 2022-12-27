@@ -1,0 +1,33 @@
+name: Deploy on Heroku
+
+on: [push]
+
+permissions:
+  contents: read
+
+env:
+  PIP_EXTRA_INDEX_URL: ${{ secrets.PIP_EXTRA_INDEX_URL }}
+  HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }} 
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build image
+      working-directory: ./titanic_api
+      run: |
+        sudo curl https://cli-assets.heroku.com/install.sh | sh
+        make build-ml-api-heroku
+    - name: Push Image to Heroku
+      working-directory: ./titanic_api
+      run: |
+        # Push the built container to the Heroku image registry
+        make push-ml-api-heroku
+    - name: Release to Heroku
+      working-directory: ./titanic_api
+      run: |
+        make release-heroku

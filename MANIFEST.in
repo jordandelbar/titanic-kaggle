@@ -9,5 +9,6 @@ include titanic_model/config.yml
 
 include ./requirements/requirements.txt
 exclude *.log
+exclude titanic_api/*
 
 recursive-exclude * __pycache__

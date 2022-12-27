@@ -1,0 +1,13 @@
+# From Gemfury
+--index-url ${PIP_EXTRA_INDEX_URL}
+titanic-model
+
+# From PyPi
+--extra-index-url https://pypi.org/simple/
+pandas~=1.5.0
+fastapi~=0.85.0
+uvicorn~=0.18.3
+loguru~=0.6.0
+python-multipart~=0.0.5
+pydantic~=1.10.2
+typing_extensions~=4.3.0
