@@ -1,0 +1,84 @@
+# model info
+model_name: titanic-model
+
+# mlflow experiment name
+experiment_name: titanic_training_pipeline
+
+# kaggle competition name
+kaggle_competition: titanic
+
+# data files
+data_files:
+  training_data: train.csv
+  testing_data: test.csv
+  gender_submission: gender_submission.csv
+
+# variables
+# target
+target: Survived
+
+# features
+features:
+  - 'PassengerId'
+  - 'Pclass'
+  - 'Name'
+  - 'Sex'
+  - 'Age'
+  - 'SibSp'
+  - 'Parch'
+  - 'Ticket'
+  - 'Fare'
+  - 'Cabin'
+  - 'Embarked'
+
+# train/test split
+test_size: 0.3
+
+# random seed for reproducibility
+random_state: 42
+
+# feature engineering
+features_to_drop:
+  - 'PassengerId'
+  - 'Name'
+  - 'SibSp'
+  - 'Parch'
+  - 'Ticket'
+  - 'Cabin'
+
+categorical_vars:
+  - 'Pclass'
+  - 'Sex'
+  - 'Embarked'
+
+numerical_vars:
+  - Age
+  - Fare
+
+vars_with_na:
+  - Age
+  - Embarked
+  - Cabin
+  - Fare
+
+cat_to_impute_frequent:
+  - 'Embarked'
+
+cat_to_impute_missing:
+  - 'title'
+
+num_to_impute:
+  - 'Age'
+  - 'Fare'
+
+rare_label_to_group:
+  - 'title'
+
+target_label_encoding:
+  - 'Pclass'
+  - 'Sex'
+  - 'Embarked'
+  - 'title'
+
+features_to_scale:
+  - 'Fare'

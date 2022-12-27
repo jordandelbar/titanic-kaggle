@@ -8,6 +8,7 @@ from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
 )
 from zenml.steps import Output, step
 
+from titanic_model.config.core import config
 from titanic_model.model_definition.sklearn_model_pipeline import titanic_pipeline
 
 experiment_tracker = Client().active_stack.experiment_tracker
@@ -18,7 +19,7 @@ if not experiment_tracker or not isinstance(
     raise RuntimeError("Your active stack needs to contain a MLFlow experiment tracker")
 
 mlflow_settings = MLFlowExperimentTrackerSettings(
-    experiment_name="titanic_training_pipeline"
+    experiment_name=config.experiment_name
 )
 
 

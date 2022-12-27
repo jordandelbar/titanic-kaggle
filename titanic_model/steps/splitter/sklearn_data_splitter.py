@@ -2,6 +2,8 @@ import pandas
 from sklearn.model_selection import train_test_split
 from zenml.steps import Output, step
 
+from titanic_model.config.core import config
+
 
 @step
 def data_splitter(
@@ -16,7 +18,7 @@ def data_splitter(
 
     Args:
         train (pandas.DataFrame): train data without the target column
-        target (pandas.Series): target columns of our train dataframe.
+        target (pandas.Series): target column of our train dataframe.
 
     Returns:
         X_train (pandas.DataFrame): train dataframe to be used for model training
@@ -26,7 +28,7 @@ def data_splitter(
     """
 
     X_train, X_test, y_train, y_test = train_test_split(
-        train, target, test_size=0.33, random_state=42
-    )  # TODO: in config
+        train, target, test_size=config.test_size, random_state=config.random_state
+    )
 
     return X_train, X_test, y_train, y_test

@@ -5,7 +5,7 @@ from mlflow import MlflowClient
 
 
 def _get_registered_models(model_name: str) -> Dict:
-    """Return all the registered models under a certain name in Mlflow
+    """Returns all the registered models under a certain name in Mlflow
 
     Args:
         model_name (str): name of the models registered
@@ -30,7 +30,7 @@ def _get_registered_models(model_name: str) -> Dict:
 
 
 def _get_metric_list(model_dictionnary: Dict, metric: str) -> List[float]:
-    """Return a metric list for all registered model in a dictionnary
+    """Returns a metric list for all registered model in a dictionnary
 
     Args:
         model_dictionnary (Dict): dict of models registered
@@ -55,7 +55,7 @@ def _get_metric_list(model_dictionnary: Dict, metric: str) -> List[float]:
 def _get_best_models_in_mlflow(
     model_name: str, metric_to_check: str
 ) -> List[Tuple[str, float]]:
-    """Return the two best models registered in the Mlflow server
+    """Returns the two best models registered in the Mlflow server
 
     Args:
         model_name (str): name of the model to be checked
@@ -93,7 +93,7 @@ def _get_best_models_in_mlflow(
 
 
 def _get_second_best_model_metric(model_name: str, metric_to_check: str) -> float:
-    """Return the second best model metric
+    """Returns the second best model metric
 
     Args:
         model_name (str): name of the model
@@ -128,7 +128,7 @@ def registering_model_decision(
         )
     )
     # We register a model only if its accurary is better than the second best
-    # model and if its f1 score is better or equal to the mean of f1 score of the
+    # model and if its f1 score is better or equal to the mean of f1 scores of the
     # different registered models. This is completely arbitrary but gives an
     # example and inspiration of the rules engine you can design
     if (
@@ -170,7 +170,7 @@ def promote_models(model_name: str, metric_to_check: str) -> None:
             version=best_models_list[1],
             stage="Staging",
         )
-    # This is completely arbitraty but in this little use case
+    # This is completely arbitraty but for this little use case
     # I don't need to perform integration tests, reason why I use
     # Staging and Production stages as best model and back-up model
     registered_models = dict()

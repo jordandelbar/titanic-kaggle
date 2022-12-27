@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
+from titanic_model.config.core import config
 from titanic_model.processing.features import preprocessing
 
 titanic_pipeline = Pipeline(
@@ -14,39 +15,39 @@ titanic_pipeline = Pipeline(
             "categorical_imputer_frequent",
             CategoricalImputer(
                 imputation_method="frequent",
-                variables=["Embarked"],  # TODO: in config
+                variables=config.cat_to_impute_frequent,
             ),
         ),
         (
             "categorical_imputer_missing",
             CategoricalImputer(
                 imputation_method="missing",
-                variables=["title"],  # TODO: in config
+                variables=config.cat_to_impute_missing,
             ),
         ),
         (
             "median_imputer",
             MeanMedianImputer(
                 imputation_method="median",
-                variables=["Age", "Fare"],  # TODO: in config
+                variables=config.num_to_impute,
             ),
         ),
         (
             "rare_label_encoder",
-            RareLabelEncoder(variables=["title"]),  # TODO: in config
+            RareLabelEncoder(variables=config.rare_label_to_group),
         ),
         (
             "mean_target_encoder",
             MeanEncoder(
                 ignore_format=True,
-                variables=["Pclass", "Sex", "Embarked", "title"],  # TODO: in config
+                variables=config.target_label_encoding,
             ),
         ),
         (
             "last_imputer",
             MeanMedianImputer(
                 imputation_method="mean",
-                variables=["Pclass", "Sex", "Embarked", "title"],  # TODO: in config
+                variables=config.target_label_encoding,
             ),
         ),
         (
@@ -56,7 +57,7 @@ titanic_pipeline = Pipeline(
                     (
                         "standard_scaler",
                         StandardScaler(),
-                        ["Fare"],  # TODO: in config
+                        config.features_to_scale,
                     )
                 ],
                 remainder="passthrough",
