@@ -18,7 +18,7 @@ def data_splitter(
 
     Args:
         train (pandas.DataFrame): train data without the target column
-        target (pandas.Series): target columns of our train dataframe.
+        target (pandas.Series): target column of our train dataframe.
 
     Returns:
         X_train (pandas.DataFrame): train dataframe to be used for model training

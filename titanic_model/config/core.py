@@ -6,47 +6,6 @@ from zenml.steps import BaseParameters
 
 
 class TrainingConfig(BaseParameters):
-    """
-    Attributes
-    ----------
-    model_name: str
-        name under which the model is registered in Mlflow
-    experiment_name: str
-        experiment name under which the pipeline is tracked in mlflow
-    training_data: str
-        file name of the training data
-    testing_data: str
-        file name of the testing data
-    target: str
-        name of the target we are trying to predict
-    features: List[str]
-        list of the features to train the model
-    test_size: float
-        ratio of the data kept for evaluating the model
-    random_state: int
-        random seed for our data split
-    features_to_drop: List[str]
-        features not used for model training
-    categorical_vars: List[str]
-        features that are categorical
-    numerical_vars: List[str]
-        features that are numerical
-    vars_with_na: List[str]
-        features where na's are expected
-    cat_to_impute_frequent: List[str]
-        categorical features where we impute most frequent when missing
-    cat_to_impute_frequent: List[str]
-        categorical features where we impute "missing" when missing
-    num_to_impute: List[str]
-        numerical features we impute the median when missing
-    rare_label_to_group: List[str]
-        categorical features that we group when rare labels
-    target_label_encoding: List[str]
-        categorical features where we use target encoding
-    features_to_scale: List[str]
-        numerical features that we scale
-    """
-
     model_name: str
     experiment_name: str
     training_data: str
@@ -77,7 +36,7 @@ def find_config_file() -> Path:
     """Locate config file
 
     Raises:
-        Exception: when a config file is not found
+        Exception: when the config file is not found
 
     Returns:
         Path: Path of the config file

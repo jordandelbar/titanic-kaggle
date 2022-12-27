@@ -44,7 +44,7 @@ def model_evaluator(
         y_test (pandas.Series): target series to be used for model evaluation
 
     Returns:
-        metrics (dict): dictionnary with the different evaluation metrics
+        metrics (Dict): dictionnary with the different evaluation metrics
     """
 
     y_predict_proba = clf_pipeline.predict_proba(X_test)[:, 1]

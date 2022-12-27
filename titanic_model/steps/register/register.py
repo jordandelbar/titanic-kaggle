@@ -31,7 +31,14 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
     settings={"experiment_tracker.mlflow": mlflow_settings},
 )
 def model_register(metrics: Dict) -> None:
-    """Register the model"""
+    """Register the model
+
+    Args:
+        metrics (Dict): metrics of the trained model
+
+    Returns:
+        None
+    """
 
     try:
         if registering_model_decision(
