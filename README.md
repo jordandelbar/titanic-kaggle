@@ -37,6 +37,7 @@ trained_model{{Trained<br>Model}}
 metrics{{Metrics}}
 
 %% Server definitions
+kaggle(Kaggle<br>API)
 mlflow(MLflow<br>Server)
 
 %% Flow relationships
@@ -70,6 +71,7 @@ register .-> trained_model
 
 trained_model -.- mlflow
 metrics -.- mlflow
+fetch_data_kaggle --o kaggle
 
 %% Color definitions
 classDef step fill:#009EAC,stroke:#333,stroke-width:2px,color:#fff;
@@ -103,6 +105,7 @@ classDef server fill:#E0446D,color:#fff;
 
     %% Server
     class mlflow server
+    class kaggle server
 ```
 
 ## :computer: How to run it locally
@@ -217,11 +220,6 @@ zenml stack set <your-new-stack-name>
 ```
 
 ### :alembic: Run the pipeline
-
-Finally, to run the pipeline you first need to download the dataset:
-```bash
-bash scripts/get_dataset.sh
-```
 
 Then you can launch the training pipeline by running:
 ```bash

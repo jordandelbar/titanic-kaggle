@@ -1,12 +1,12 @@
-import os
-import zipfile
-from pathlib import Path
-
 import pandas
-from kaggle.api.kaggle_api_extended import KaggleApi
 from zenml.steps import Output, step
 
 from titanic_model.config.core import config
+from titanic_model.utils.files_management import (
+    check_if_files_exists,
+    download_files_from_kaggle,
+    return_datasets_path,
+)
 
 
 @step
@@ -21,27 +21,11 @@ def data_loader() -> Output(
         test (pandas.DataFrame): test data (to return to the Titanic competition).
     """
 
-    kaggle_api = KaggleApi()
-    kaggle_api.authenticate()
-    kaggle_api.competition_download_files(
-        config.kaggle_competition,
-        path=Path(__file__).resolve().parents[2] / "datasets/",
-    )
-    with zipfile.ZipFile(f"./{config.kaggle_competition}.zip", "r") as zipref:
-        zipref.extractall(Path(__file__).resolve().parents[2] / "datasets/")
+    if not check_if_files_exists(config.data_files.values()):
+        download_files_from_kaggle(kaggle_competition=config.kaggle_competition)
 
-    os.remove(
-        Path(__file__).resolve().parents[2]
-        / "datasets/"
-        / f"{config.kaggle_competition}.zip"
-    )
-
-    train = pandas.read_csv(
-        Path(__file__).resolve().parents[3] / f"datasets/{config.training_data}"
-    )
-    test = pandas.read_csv(
-        Path(__file__).resolve().parents[3] / f"datasets/{config.testing_data}"
-    )
+    train = pandas.read_csv(return_datasets_path() / config.data_files["training_data"])
+    test = pandas.read_csv(return_datasets_path() / config.data_files["testing_data"])
 
     target = train[config.target]
     train.drop(config.target, axis=1, inplace=True)

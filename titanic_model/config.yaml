@@ -8,8 +8,10 @@ experiment_name: titanic_training_pipeline
 kaggle_competition: titanic
 
 # data files
-training_data: train.csv
-testing_data: test.csv
+data_files:
+  training_data: train.csv
+  testing_data: test.csv
+  gender_submission: gender_submission.csv
 
 # variables
 # target

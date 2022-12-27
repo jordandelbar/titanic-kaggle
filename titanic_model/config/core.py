@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 import yaml
 from zenml.steps import BaseParameters
@@ -9,8 +9,7 @@ class TrainingConfig(BaseParameters):
     model_name: str
     experiment_name: str
     kaggle_competition: str
-    training_data: str
-    testing_data: str
+    data_files: Dict[str, str]
     target: str
     features: List[str]
     test_size: float
