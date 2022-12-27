@@ -8,6 +8,7 @@ from zenml.steps import BaseParameters
 class TrainingConfig(BaseParameters):
     model_name: str
     experiment_name: str
+    kaggle_competition: str
     training_data: str
     testing_data: str
     target: str

@@ -4,6 +4,9 @@ model_name: titanic-model
 # mlflow experiment name
 experiment_name: titanic_training_pipeline
 
+# kaggle competition name
+kaggle_competition: titanic
+
 # data files
 training_data: train.csv
 testing_data: test.csv
