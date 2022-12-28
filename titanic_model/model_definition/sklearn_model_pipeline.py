@@ -5,8 +5,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
-from titanic_model.config.core import config
-from titanic_model.processing.features import preprocessing
+from config.core import config
+from processing.features import preprocessing
 
 titanic_pipeline = Pipeline(
     [
