@@ -1,3 +1,4 @@
+from pathlib import Path
 import mlflow
 import pandas as pd
 from sklearn.pipeline import Pipeline
@@ -38,7 +39,12 @@ def trainer(X_train: pd.DataFrame, y_train: pd.Series) -> Output(clf_pipeline=Pi
         clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline
     """
 
-    mlflow.sklearn.autolog(log_input_examples=True, log_post_training_metrics=False)
     titanic_pipeline.fit(X=X_train, y=y_train)
+
+    mlflow.sklearn.log_model(
+        sk_model=titanic_pipeline,
+        artifact_path="model",
+        code_paths=[str(Path(__file__).resolve().parents[2])],
+    )
 
     return titanic_pipeline

@@ -1,7 +1,7 @@
 from zenml.pipelines import pipeline
 
 
-@pipeline
+@pipeline(enable_cache=False)
 def deploying_pipeline(model_fetcher, bento_builder):
     # Fetch the model from mlflow
     model = model_fetcher()

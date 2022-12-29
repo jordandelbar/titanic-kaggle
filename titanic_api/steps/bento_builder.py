@@ -7,7 +7,7 @@ from zenml.integrations.bentoml.steps import (
 
 bento_builder = bento_builder_step(
     params=BentoMLBuilderParameters(
-        model_name="titanic-model",
+        model_name="titanic_model",
         model_type="sklearn",
         service="service.py:svc",
         labels={
@@ -15,11 +15,9 @@ bento_builder = bento_builder_step(
             "dataset": "titanic",
             "zenml_version": "0.30.0",
         },
-        exclude=["titanic_model/"],
         python={
             "packages": ["zenml", "scikit-learn", "pandas", "numpy"],
             "lock_packages": False,
         },
-        working_dir=str(Path(__file__).resolve().parents[1]),
     )
 )
