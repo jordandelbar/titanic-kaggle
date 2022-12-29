@@ -8,8 +8,8 @@ from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
 )
 from zenml.steps import Output, step
 
-from config.core import config
-from model_definition.sklearn_model_pipeline import titanic_pipeline
+from titanic_model.config.core import config
+from titanic_model.model_definition.sklearn_model_pipeline import titanic_pipeline
 
 experiment_tracker = Client().active_stack.experiment_tracker
 

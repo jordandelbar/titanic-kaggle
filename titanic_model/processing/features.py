@@ -6,7 +6,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 features_to_drop = ["PassengerId", "Name", "SibSp", "Parch", "Ticket", "Cabin"]
 
 
-class preprocessing(BaseEstimator, TransformerMixin):
+class Preprocessing(BaseEstimator, TransformerMixin):
     """Class to preprocess data and clean it
 
     Args:

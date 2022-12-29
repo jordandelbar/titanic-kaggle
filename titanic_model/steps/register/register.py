@@ -8,8 +8,8 @@ from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
 )
 from zenml.steps import step
 
-from config.core import config
-from mlflow_model_management.mlflow_model_management import (
+from titanic_model.config.core import config
+from titanic_model.mlflow_model_management.mlflow_model_management import (
     promote_models,
     registering_model_decision,
 )
