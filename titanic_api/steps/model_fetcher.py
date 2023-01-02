@@ -1,6 +1,6 @@
 import mlflow
-from zenml.steps import step, Output
 from sklearn.pipeline import Pipeline
+from zenml.steps import Output, step
 
 
 @step

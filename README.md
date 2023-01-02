@@ -17,6 +17,7 @@ flowchart LR
 %% Flow definitions
 fetch_data_kaggle([Fetch Kaggle Data])
 loader([Load Data])
+preprocessor([Preprocessing Data])
 splitter([Split Data])
 trainer([Train Model])
 evaluator([Evaluate Model])
@@ -25,6 +26,7 @@ register([Register Model])
 %% Data definitions
 raw_data[(raw data)]
 train[(train)]
+train_preprocessed[(prep train)]
 target[(target)]
 test[(test)]
 X_train[(X_train)]
@@ -42,7 +44,8 @@ mlflow(MLflow<br>Server)
 
 %% Flow relationships
 fetch_data_kaggle --> loader
-loader --> splitter
+loader --> preprocessor
+preprocessor --> splitter
 splitter --> trainer
 trainer --> evaluator
 evaluator --> register
@@ -53,7 +56,9 @@ raw_data .-> loader
 loader .-> train
 loader .-> target
 loader .-> test
-train .-> splitter
+train .-> preprocessor
+preprocessor .-> train_preprocessed
+train_preprocessed .-> splitter
 target .-> splitter
 splitter .-> X_train
 splitter .-> X_test
@@ -83,6 +88,7 @@ classDef server fill:#E0446D,color:#fff;
     %% Steps
     class fetch_data_kaggle step;
     class loader step;
+    class preprocessor step;
     class splitter step;
     class trainer step;
     class evaluator step;
@@ -91,6 +97,7 @@ classDef server fill:#E0446D,color:#fff;
     %% Data
     class raw_data data;
     class train data;
+    class train_preprocessed data;
     class target data;
     class test data;
     class X_train data;

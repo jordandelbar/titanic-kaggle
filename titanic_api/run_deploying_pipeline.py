@@ -1,7 +1,6 @@
 from pipelines.deploying_pipeline import deploying_pipeline
-from steps.model_fetcher import model_fetcher
 from steps.bento_builder import bento_builder
-
+from steps.model_fetcher import model_fetcher
 
 run = deploying_pipeline(model_fetcher=model_fetcher(), bento_builder=bento_builder)
 
