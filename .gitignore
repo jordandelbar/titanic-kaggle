@@ -129,3 +129,6 @@ dmypy.json
 
 # models
 *.pkl
+
+# ZenML
+*/.zen
