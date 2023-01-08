@@ -1,5 +1,2 @@
-pip install -r ./requirements/requirements.txt
-zenml integration install mlflow -y
-pip install mlflow==2.0.1
-pip install pre-commit
+pip install -r ./requirements/requirements-dev.txt
 pre-commit install
