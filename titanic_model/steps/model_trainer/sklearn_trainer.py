@@ -38,12 +38,9 @@ def trainer(X_train: pd.DataFrame, y_train: pd.Series) -> Output(clf_pipeline=Pi
         clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline
     """
 
-    titanic_pipeline.fit(X=X_train, y=y_train)
-
-    mlflow.sklearn.log_model(
-        sk_model=titanic_pipeline,
-        artifact_path="model",
-    )
     mlflow.log_dict(config.dict(), "model_config.json")
+    mlflow.sklearn.autolog(log_input_examples=True)
+
+    titanic_pipeline.fit(X=X_train, y=y_train)
 
     return titanic_pipeline

@@ -1,27 +1,23 @@
+import json
+from typing import Dict
+
 import bentoml
 import numpy
 import pandas
 from bentoml.io import JSON, NumpyNdarray
-from pydantic import BaseModel
+
+with open("meta.json", "r") as file:
+    serving_meta = json.load(file)
+
 
 titanic_runner = bentoml.sklearn.get("titanic_model:latest").to_runner()
 
 svc = bentoml.Service("titanic-service", runners=[titanic_runner])
 
-
-class TitanicFeatures(BaseModel):
-    Pclass: int = 3
-    Sex: str = "male"
-    Age: float = 33.0
-    Fare: float = 8.0
-    Embarked: str = "Q"
-    is_baby: int = 0
-    alone: int = 0
-    family: int = 2
-    title: str = "Mr"
+Input = JSON.from_sample(serving_meta)
 
 
-@svc.api(input=JSON(pydantic_model=TitanicFeatures), output=NumpyNdarray())
-def predict_bentoml(input_data: TitanicFeatures) -> numpy.ndarray:
-    input_df = pandas.DataFrame([input_data.dict()])
+@svc.api(input=Input, output=NumpyNdarray())
+def predict_bentoml(input_data: Dict) -> numpy.ndarray:
+    input_df = pandas.DataFrame([input_data])
     return titanic_runner.predict_proba.run(input_df)[:, 1]

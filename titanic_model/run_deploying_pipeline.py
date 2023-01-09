@@ -1,10 +1,11 @@
 from pipelines.deploying_pipeline import deploying_pipeline
-from steps.bento_model_saver.bento_model_saver import model_saver
-from steps.bento_service_builder.bento_service_builder import bento_builder
-from steps.bento_service_containerizer.bento_service_containerizer import (
+from steps.model_fetcher.model_fetcher import model_fetcher
+
+from titanic_model.steps.bento_serving_steps.bento_model_saver import model_saver
+from titanic_model.steps.bento_serving_steps.bento_service_builder import bento_builder
+from titanic_model.steps.bento_serving_steps.bento_service_containerizer import (
     bento_containerizer,
 )
-from steps.model_fetcher.model_fetcher import model_fetcher
 
 run = deploying_pipeline(
     model_fetcher=model_fetcher(),

@@ -132,3 +132,6 @@ dmypy.json
 
 # ZenML
 */.zen
+
+# json files
+*.json
