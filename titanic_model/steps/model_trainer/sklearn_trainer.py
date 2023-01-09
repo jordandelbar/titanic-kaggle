@@ -44,5 +44,6 @@ def trainer(X_train: pd.DataFrame, y_train: pd.Series) -> Output(clf_pipeline=Pi
         sk_model=titanic_pipeline,
         artifact_path="model",
     )
+    mlflow.log_dict(config.dict(), "model_config.json")
 
     return titanic_pipeline
