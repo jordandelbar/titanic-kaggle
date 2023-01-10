@@ -7,7 +7,9 @@
 aiofiles==22.1.0
     # via mlserver
 aiohttp==3.8.3
-    # via tritonclient
+    # via
+    #   bentoml
+    #   tritonclient
 aiokafka==0.8.0
     # via mlserver
 aiosignal==1.3.1
@@ -22,6 +24,9 @@ anyio==3.6.2
     # via
     #   jupyter-server
     #   starlette
+    #   watchfiles
+appdirs==1.4.4
+    # via fs
 argon2-cffi==21.3.0
     # via
     #   jupyter-server
@@ -31,6 +36,8 @@ argon2-cffi-bindings==21.2.0
     # via argon2-cffi
 arrow==1.2.3
     # via isoduration
+asgiref==3.6.0
+    # via opentelemetry-instrumentation-asgi
 asttokens==2.2.1
     # via stack-data
 async-timeout==4.0.2
@@ -40,19 +47,29 @@ async-timeout==4.0.2
 attrs==22.2.0
     # via
     #   aiohttp
+    #   bentoml
+    #   cattrs
     #   jsonschema
 backcall==0.2.0
     # via ipython
 backoff==1.10.0
-    # via analytics-python
+    # via
+    #   analytics-python
+    #   opentelemetry-exporter-otlp-proto-http
 bcrypt==4.0.1
     # via passlib
 beautifulsoup4==4.11.1
     # via nbconvert
+bentoml==1.0.12
+    # via -r requirements/requirements.in
 bleach==5.0.1
     # via nbconvert
 brotli==1.0.9
     # via geventhttpclient
+build==0.9.0
+    # via pip-tools
+cattrs==22.2.0
+    # via bentoml
 certifi==2022.12.7
     # via
     #   geventhttpclient
@@ -64,25 +81,35 @@ charset-normalizer==2.1.1
     # via
     #   aiohttp
     #   requests
+circus==0.18.0
+    # via bentoml
 click==8.1.3
     # via
+    #   bentoml
+    #   click-option-group
     #   click-params
     #   databricks-cli
     #   flask
     #   mlflow
     #   mlserver
+    #   pip-tools
     #   uvicorn
     #   zenml
+click-option-group==0.5.5
+    # via bentoml
 click-params==0.3.0
     # via zenml
 cloudpickle==2.2.0
     # via
+    #   bentoml
     #   mlflow
     #   shap
 comm==0.1.2
     # via ipykernel
 commonmark==0.9.1
     # via rich
+contextlib2==21.6.0
+    # via schema
 contourpy==1.0.6
     # via matplotlib
 cycler==0.11.0
@@ -95,8 +122,12 @@ decorator==5.1.1
     # via
     #   ipython
     #   validators
+deepmerge==1.1.0
+    # via bentoml
 defusedxml==0.7.1
     # via nbconvert
+deprecated==1.2.13
+    # via opentelemetry-api
 distro==1.8.0
     # via zenml
 docker==6.0.1
@@ -107,9 +138,11 @@ entrypoints==0.4
     # via
     #   jupyter-client
     #   mlflow
+exceptiongroup==1.1.0
+    # via cattrs
 executing==1.2.0
     # via stack-data
-fastapi==0.89.0
+fastapi==0.88.0
     # via mlserver
 fastjsonschema==2.16.2
     # via nbformat
@@ -125,6 +158,8 @@ frozenlist==1.3.3
     # via
     #   aiohttp
     #   aiosignal
+fs==2.4.16
+    # via bentoml
 gevent==22.10.2
     # via geventhttpclient
 geventhttpclient==2.0.2
@@ -135,6 +170,8 @@ gitpython==3.1.30
     # via
     #   mlflow
     #   zenml
+googleapis-common-protos==1.58.0
+    # via opentelemetry-exporter-otlp-proto-http
 greenlet==2.0.1
     # via
     #   gevent
@@ -157,7 +194,7 @@ idna==3.4
     #   yarl
 importlib-metadata==5.2.0
     # via mlflow
-ipykernel==6.19.4
+ipykernel==6.20.1
     # via
     #   ipywidgets
     #   nbclassic
@@ -181,6 +218,7 @@ jedi==0.18.2
     # via ipython
 jinja2==3.1.2
     # via
+    #   bentoml
     #   flask
     #   jupyter-server
     #   mlflow
@@ -202,7 +240,7 @@ jupyter-client==7.4.8
     #   nbclassic
     #   nbclient
     #   notebook
-jupyter-core==5.1.2
+jupyter-core==5.1.3
     # via
     #   jupyter-client
     #   jupyter-server
@@ -217,7 +255,7 @@ jupyter-server==2.0.6
     # via
     #   nbclassic
     #   notebook-shim
-jupyter-server-terminals==0.4.3
+jupyter-server-terminals==0.4.4
     # via jupyter-server
 jupyterlab-pygments==0.2.2
     # via nbconvert
@@ -253,11 +291,11 @@ mlflow==2.1.1
     # via
     #   -r requirements/requirements.in
     #   mlserver-mlflow
-mlserver==1.2.1
+mlserver==1.2.2
     # via
     #   -r requirements/requirements.in
     #   mlserver-mlflow
-mlserver-mlflow==1.2.1
+mlserver-mlflow==1.2.2
     # via -r requirements/requirements.in
 monotonic==1.6
     # via analytics-python
@@ -296,6 +334,7 @@ numba==0.56.4
 numpy==1.23.5
     # via
     #   -r requirements/requirements.in
+    #   bentoml
     #   contourpy
     #   feature-engine
     #   matplotlib
@@ -313,17 +352,56 @@ numpy==1.23.5
     #   xgboost
 oauthlib==3.2.2
     # via databricks-cli
-orjson==3.8.4
+opentelemetry-api==1.14.0
+    # via
+    #   bentoml
+    #   opentelemetry-exporter-otlp-proto-http
+    #   opentelemetry-instrumentation
+    #   opentelemetry-instrumentation-aiohttp-client
+    #   opentelemetry-instrumentation-asgi
+    #   opentelemetry-sdk
+opentelemetry-exporter-otlp-proto-http==1.14.0
+    # via bentoml
+opentelemetry-instrumentation==0.35b0
+    # via
+    #   bentoml
+    #   opentelemetry-instrumentation-aiohttp-client
+    #   opentelemetry-instrumentation-asgi
+opentelemetry-instrumentation-aiohttp-client==0.35b0
+    # via bentoml
+opentelemetry-instrumentation-asgi==0.35b0
+    # via bentoml
+opentelemetry-proto==1.14.0
+    # via opentelemetry-exporter-otlp-proto-http
+opentelemetry-sdk==1.14.0
+    # via
+    #   bentoml
+    #   opentelemetry-exporter-otlp-proto-http
+opentelemetry-semantic-conventions==0.35b0
+    # via
+    #   bentoml
+    #   opentelemetry-instrumentation-aiohttp-client
+    #   opentelemetry-instrumentation-asgi
+    #   opentelemetry-sdk
+opentelemetry-util-http==0.35b0
+    # via
+    #   bentoml
+    #   opentelemetry-instrumentation-aiohttp-client
+    #   opentelemetry-instrumentation-asgi
+orjson==3.8.5
     # via mlserver
-packaging==22.0
+packaging==21.3
     # via
     #   aiokafka
+    #   bentoml
+    #   build
     #   docker
     #   ipykernel
     #   jupyter-server
     #   matplotlib
     #   mlflow
     #   nbconvert
+    #   pip-requirements-parser
     #   shap
     #   statsmodels
 pandas==1.5.2
@@ -341,18 +419,27 @@ parso==0.8.3
     # via jedi
 passlib[bcrypt]==1.7.4
     # via zenml
+pathspec==0.10.3
+    # via bentoml
 patsy==0.5.3
     # via statsmodels
+pep517==0.13.0
+    # via build
 pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
 pillow==9.4.0
     # via matplotlib
+pip-requirements-parser==32.0.1
+    # via bentoml
+pip-tools==6.12.1
+    # via bentoml
 platformdirs==2.6.2
     # via jupyter-core
 prometheus-client==0.15.0
     # via
+    #   bentoml
     #   jupyter-server
     #   nbclassic
     #   notebook
@@ -363,10 +450,15 @@ prompt-toolkit==3.0.36
 protobuf==3.20.3
     # via
     #   -r requirements/requirements.in
+    #   googleapis-common-protos
     #   mlflow
     #   mlserver
+    #   opentelemetry-proto
 psutil==5.9.4
-    # via ipykernel
+    # via
+    #   bentoml
+    #   circus
+    #   ipykernel
 ptyprocess==0.7.0
     # via
     #   pexpect
@@ -393,10 +485,14 @@ pyjwt==2.6.0
     # via databricks-cli
 pymysql==1.0.2
     # via zenml
+pynvml==11.4.1
+    # via bentoml
 pyparsing==2.4.7
     # via
     #   httplib2
     #   matplotlib
+    #   packaging
+    #   pip-requirements-parser
     #   zenml
 pyrsistent==0.19.3
     # via jsonschema
@@ -404,6 +500,7 @@ python-dateutil==2.8.2
     # via
     #   analytics-python
     #   arrow
+    #   bentoml
     #   jupyter-client
     #   kaggle
     #   matplotlib
@@ -412,7 +509,11 @@ python-dateutil==2.8.2
 python-dotenv==0.21.0
     # via mlserver
 python-json-logger==2.0.4
-    # via jupyter-events
+    # via
+    #   bentoml
+    #   jupyter-events
+python-multipart==0.0.5
+    # via bentoml
 python-rapidjson==1.9
     # via tritonclient
 python-slugify==7.0.0
@@ -425,11 +526,13 @@ pytz==2022.7
     #   pandas
 pyyaml==5.4.1
     # via
+    #   bentoml
     #   jupyter-events
     #   mlflow
     #   zenml
 pyzmq==24.0.1
     # via
+    #   circus
     #   ipykernel
     #   jupyter-client
     #   jupyter-server
@@ -440,16 +543,22 @@ querystring-parser==1.2.4
 requests==2.28.1
     # via
     #   analytics-python
+    #   bentoml
     #   databricks-cli
     #   docker
     #   kaggle
     #   mlflow
+    #   opentelemetry-exporter-otlp-proto-http
 rfc3339-validator==0.1.4
     # via jsonschema
 rfc3986-validator==0.1.1
     # via jsonschema
 rich[jupyter]==12.6.0
-    # via zenml
+    # via
+    #   bentoml
+    #   zenml
+schema==0.7.5
+    # via bentoml
 scikit-learn==1.2.0
     # via
     #   -r requirements/requirements.in
@@ -471,16 +580,20 @@ send2trash==1.8.0
     #   notebook
 shap==0.41.0
     # via mlflow
+simple-di==0.1.5
+    # via bentoml
 six==1.16.0
     # via
     #   analytics-python
     #   asttokens
     #   bleach
     #   databricks-cli
+    #   fs
     #   geventhttpclient
     #   kaggle
     #   patsy
     #   python-dateutil
+    #   python-multipart
     #   querystring-parser
     #   rfc3339-validator
     #   validators
@@ -507,6 +620,7 @@ stack-data==0.6.2
     # via ipython
 starlette==0.22.0
     # via
+    #   bentoml
     #   fastapi
     #   starlette-exporter
 starlette-exporter==0.14.0
@@ -527,8 +641,13 @@ threadpoolctl==3.1.0
     # via scikit-learn
 tinycss2==1.2.1
     # via nbconvert
+tomli==2.0.1
+    # via
+    #   build
+    #   pep517
 tornado==6.2
     # via
+    #   circus
     #   ipykernel
     #   jupyter-client
     #   jupyter-server
@@ -539,7 +658,7 @@ tqdm==4.64.1
     # via
     #   kaggle
     #   shap
-traitlets==5.8.0
+traitlets==5.8.1
     # via
     #   comm
     #   ipykernel
@@ -559,6 +678,7 @@ tritonclient[http]==2.29.0
     # via mlserver
 typing-extensions==4.4.0
     # via
+    #   opentelemetry-sdk
     #   pydantic
     #   sqlalchemy2-stubs
 uri-template==1.2.0
@@ -569,11 +689,15 @@ urllib3==1.26.13
     #   kaggle
     #   requests
 uvicorn==0.20.0
-    # via mlserver
+    # via
+    #   bentoml
+    #   mlserver
 uvloop==0.17.0
     # via mlserver
 validators==0.18.2
     # via click-params
+watchfiles==0.18.1
+    # via bentoml
 wcwidth==0.2.5
     # via prompt-toolkit
 webcolors==1.12
@@ -588,8 +712,15 @@ websocket-client==1.4.2
     #   jupyter-server
 werkzeug==2.2.2
     # via flask
+wheel==0.38.4
+    # via pip-tools
 widgetsnbextension==3.6.1
     # via ipywidgets
+wrapt==1.14.1
+    # via
+    #   deprecated
+    #   opentelemetry-instrumentation
+    #   opentelemetry-instrumentation-aiohttp-client
 xgboost==1.7.3
     # via -r requirements/requirements.in
 yarl==1.8.2
@@ -604,4 +735,5 @@ zope-interface==5.5.2
     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
+# pip
 # setuptools

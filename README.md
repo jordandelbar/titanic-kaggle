@@ -240,7 +240,7 @@ source .venv/<name-of-your-venv>/bin/activate
 
 Once your virtual environment is set up you can simply run:
 ```bash
-pip install -r requirements/requirements.txt
+pip install -r requirements/requirements-dev.txt
 ```
 To install the pre-commit hooks:
 ```bash

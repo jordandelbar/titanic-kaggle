@@ -135,3 +135,6 @@ dmypy.json
 
 # json files
 *.json
+
+# notebooks
+*ipynb
