@@ -5,7 +5,7 @@ import bentoml
 import pandas
 from bentoml.io import JSON
 
-with open("meta.json", "r") as file:
+with open("input_examples.json", "r") as file:
     serving_meta = json.load(file)
 
 
