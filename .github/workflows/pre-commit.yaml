@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: '2'
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -25,5 +27,5 @@ jobs:
           pip install pre-commit
           pre-commit install
           echo "Running pre-commit scans:"
-          pre-commit run -v --files $(git --no-pager  diff --name-only HEAD^ HEAD)
+          pre-commit run -v --files $(git --no-pager  diff --name-only HEAD^ -- HEAD)
         shell: bash
