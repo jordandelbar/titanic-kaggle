@@ -5,3 +5,6 @@ def main():
 
 def test():
     print("test")
+
+def create_modif():
+    return None
