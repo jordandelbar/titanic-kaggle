@@ -26,5 +26,5 @@ jobs:
           python -m pip install --upgrade pip
           pip install pre-commit
           echo "Running pre-commit scans:"
-          pre-commit run -v --files $(git --no-pager  diff --name-only HEAD^ -- HEAD)
+          pre-commit run --from-ref HEAD^ --to-ref HEAD
         shell: bash
