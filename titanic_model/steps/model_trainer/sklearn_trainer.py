@@ -1,5 +1,5 @@
 import mlflow
-import pandas as pd
+import pandas
 from sklearn.pipeline import Pipeline
 from zenml.client import Client
 from zenml.integrations.mlflow.experiment_trackers import MLFlowExperimentTracker
@@ -27,8 +27,10 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
     experiment_tracker=experiment_tracker.name,
     settings={"experiment_tracker.mlflow": mlflow_settings},
 )
-def trainer(X_train: pd.DataFrame, y_train: pd.Series) -> Output(clf_pipeline=Pipeline):
-    """Train the model on the training dataframe
+def trainer(
+    X_train: pandas.DataFrame, y_train: pandas.Series
+) -> Output(clf_pipeline=Pipeline):
+    """Trains the model on the training dataframe
 
     Args:
         X_train (pandas.DataFrame): train dataframe to be used for model training
@@ -38,7 +40,9 @@ def trainer(X_train: pd.DataFrame, y_train: pd.Series) -> Output(clf_pipeline=Pi
         clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline
     """
 
-    mlflow.sklearn.autolog(log_input_examples=True, log_post_training_metrics=False)
+    mlflow.log_dict(config.dict(), "model_config.json")
+    mlflow.sklearn.autolog(log_input_examples=True)
+
     titanic_pipeline.fit(X=X_train, y=y_train)
 
     return titanic_pipeline

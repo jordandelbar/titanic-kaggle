@@ -1,0 +1,21 @@
+# To download the titanic dataset
+kaggle
+
+# Pipeline package
+zenml==0.31.0
+
+# Data Science packages
+numpy>=1.23.5
+pandas==1.5.2
+scikit-learn==1.2.0
+xgboost==1.7.3
+feature-engine==1.5.2
+
+# Model registry packages
+mlflow >=2.1.1
+mlserver>=1.2.1
+mlserver-mlflow>=1.2.1
+protobuf>=3.7.0,<4.0.0
+
+# Model serving package
+bentoml==1.0.12

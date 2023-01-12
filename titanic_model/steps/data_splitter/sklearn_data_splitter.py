@@ -14,7 +14,7 @@ def data_splitter(
     y_train=pandas.Series,
     y_test=pandas.Series,
 ):
-    """Split the data into training and testing dataframes
+    """Splits the data into training and testing dataframes
 
     Args:
         train (pandas.DataFrame): train data without the target column

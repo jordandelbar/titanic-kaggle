@@ -1,5 +1,5 @@
 # model info
-model_name: titanic-model
+model_name: titanic_model
 
 # mlflow experiment name
 experiment_name: titanic_training_pipeline

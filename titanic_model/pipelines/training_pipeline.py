@@ -5,12 +5,15 @@ docker_settings = DockerSettings(replicate_local_python_environment="pip_freeze"
 
 
 @pipeline(enable_cache=False, settings={"docker": docker_settings})
-def training_pipeline(loader, splitter, trainer, evaluator, register):
+def training_pipeline(loader, preprocessor, splitter, trainer, evaluator, register):
     # Load the data
     train, target, test = loader()
 
+    # Preprocess train
+    preprocessed_train = preprocessor(X=train)
+
     # Split the data in train and test dataset
-    X_train, X_test, y_train, y_test = splitter(train, target)
+    X_train, X_test, y_train, y_test = splitter(preprocessed_train, target)
 
     # Train the model
     clf_pipeline = trainer(X_train, y_train)

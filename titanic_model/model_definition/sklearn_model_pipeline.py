@@ -6,11 +6,9 @@ from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
 from titanic_model.config.core import config
-from titanic_model.processing.features import preprocessing
 
 titanic_pipeline = Pipeline(
     [
-        ("preprocessing", preprocessing()),
         (
             "categorical_imputer_frequent",
             CategoricalImputer(

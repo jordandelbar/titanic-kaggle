@@ -9,7 +9,9 @@ Just having fun with the [Titanic Kaggle competition]!
 
 Using [ZenML] we aim to train a model about the probability of survival for the Titanic passengers and then upload that model on a [Mlflow] instance. If you wish to run your own Mlflow instance on [Heroku] you can check this [repo](https://github.com/jordandelbar/mlflow-heroku).
 
-Here's the workflow of our pipeline:
+Once a model is trained and stored in our model registry we can deploy it on a cloud instance. We first use ZenML with [BentoML] in order to create a Docker image.
+
+### :gear: Training pipeline workflow
 
 ```mermaid
 flowchart LR
@@ -17,6 +19,7 @@ flowchart LR
 %% Flow definitions
 fetch_data_kaggle([Fetch Kaggle Data])
 loader([Load Data])
+preprocessor([Preprocessing Data])
 splitter([Split Data])
 trainer([Train Model])
 evaluator([Evaluate Model])
@@ -25,6 +28,7 @@ register([Register Model])
 %% Data definitions
 raw_data[(raw data)]
 train[(train)]
+train_preprocessed[(prep train)]
 target[(target)]
 test[(test)]
 X_train[(X_train)]
@@ -42,7 +46,8 @@ mlflow(MLflow<br>Server)
 
 %% Flow relationships
 fetch_data_kaggle --> loader
-loader --> splitter
+loader --> preprocessor
+preprocessor --> splitter
 splitter --> trainer
 trainer --> evaluator
 evaluator --> register
@@ -53,7 +58,9 @@ raw_data .-> loader
 loader .-> train
 loader .-> target
 loader .-> test
-train .-> splitter
+train .-> preprocessor
+preprocessor .-> train_preprocessed
+train_preprocessed .-> splitter
 target .-> splitter
 splitter .-> X_train
 splitter .-> X_test
@@ -69,9 +76,10 @@ trainer .-> trained_model
 evaluator .-> metrics
 register .-> trained_model
 
+%% Server relationship
 trained_model -.- mlflow
 metrics -.- mlflow
-fetch_data_kaggle --o kaggle
+kaggle -.- fetch_data_kaggle
 
 %% Color definitions
 classDef step fill:#009EAC,stroke:#333,stroke-width:2px,color:#fff;
@@ -83,6 +91,7 @@ classDef server fill:#E0446D,color:#fff;
     %% Steps
     class fetch_data_kaggle step;
     class loader step;
+    class preprocessor step;
     class splitter step;
     class trainer step;
     class evaluator step;
@@ -91,6 +100,7 @@ classDef server fill:#E0446D,color:#fff;
     %% Data
     class raw_data data;
     class train data;
+    class train_preprocessed data;
     class target data;
     class test data;
     class X_train data;
@@ -106,6 +116,77 @@ classDef server fill:#E0446D,color:#fff;
     %% Server
     class mlflow server
     class kaggle server
+```
+### :building_construction:	Deploying pipeline workflow
+
+```mermaid
+flowchart LR
+
+%% Flow definitions
+fetch_model([Fetch Model])
+save_model([Save Model])
+build_service([Build Service])
+containerize_service([Containerize Service])
+
+%% Data definitions
+
+
+%% artifacts definitions
+trained_model{{Trained<br>Model}}
+bento_model{{Bento<br>Model}}
+bento_service{{Bento<br>Service}}
+docker_image{{Docker<br>Service<br>Image}}
+
+%% Server definitions
+mlflow(MLflow<br>Server)
+
+%% Flow relationships
+fetch_model --> save_model
+save_model --> build_service
+build_service --> containerize_service
+
+
+%% Data relationships
+
+
+%% Artifacts relationships
+fetch_model .-> trained_model
+trained_model .-> save_model
+save_model .-> bento_model
+bento_model .-> build_service
+build_service .-> bento_service
+bento_service .-> containerize_service
+containerize_service .-> docker_image
+
+%% Server relationships
+mlflow -.- fetch_model
+
+%% Color definitions
+classDef step fill:#009EAC,stroke:#333,stroke-width:2px,color:#fff;
+classDef data fill:#223848,stroke:#3F5A6C,color:#fff;
+classDef artifact fill:#615E9C,color:#fff;
+classDef server fill:#E0446D,color:#fff;
+
+%% Colors
+    %% Steps
+    class fetch_model step;
+    class save_model step;
+    class build_service step;
+    class containerize_service step;
+
+    %% Data
+
+
+    %% Artifacts
+    class trained_model artifact;
+    class bento_model artifact;
+    class bento_service artifact;
+    class docker_image artifact;
+
+
+    %% Server
+    class mlflow server
+
 ```
 
 ## :computer: How to run it locally
@@ -151,31 +232,45 @@ python -m venv .venv/<name-of-your-venv>
 That you can activate using:
 ```bash
 source .venv/<name-of-your-venv>/bin/activate
-```bash
-source .venv/<name-of-your-venv>/bin/activate
 ```
+
 ### :package: Install the different dependencies
 
 Once your virtual environment is set up you can simply run:
 ```bash
+pip install -r requirements/requirements-dev.txt
+```
+To install the pre-commit hooks:
+```bash
+pre-commit install
+```
+You can also use the bash script that wraps up those two commands:
+```bash
 bash scripts/install_dependencies.sh
 ```
-To install the different dependencies needed to run the project.
 
 ### :seedling: Environment variables
 
 You will also need several environment variables to run this project:
 - a `KAGGLE_USERNAME` and a `KAGGLE_KEY` to download the titanic competition dataset.
 - a `ZENML_SERVER_URL`, `ZENML_USERNAME` and `ZENML_PASSWORD` to connect to a running instance of Zenml
+- a `MLFLOW_TRACKING_URI` to your mlflow server and `MLFLOW_TRACKING_USERNAME` and `MLFLOW_TRACKING_PASSWORD` if it is protected
 
 You can gather all these environment variables in a `.env` file in the root directory of this repo.
 
 ```bash
+# Kaggle API secrets
 KAGGLE_USERNAME=<your-kaggle-username>
 KAGGLE_KEY=<your-kaggle-key>
+# ZenML server secrets
 ZENML_SERVER_URL=<your-zenml-server-url>
 ZENML_USERNAME=<your-zenml-server-username>
 ZENML_PASSWORD=<your-zenml-server-password>
+# MLflow server secrets
+MLFLOW_TRACKING_URI=<your-mlflow-tracking-uri>
+MLFLOW_TRACKING_USERNAME=<your-mlflow-username>
+MLFLOW_TRACKING_PASSWORD=<your-mlflow-password>
+# Setting up the python path
 PYTHONPATH=.
 ```
 
@@ -190,28 +285,40 @@ For the Kaggle credentials you can also download a `kaggle.json` file from your 
 
 ### :shinto_shrine: Spin up your ZenML server
 
-You can run:
+To spin up a ZenML server on your local machine ou can run:
 ```bash
 zenml up --docker
 ```
 
-to spin up a ZenML server on your local machine and then connect to it by running:
-
+And then connect to it by running:
 ```bash
-zenml connect --url=$ZENML_SERVER_URL --username=$ZENML_USERNAME --password=$ZENML_PASSWORD
+zenml connect --url=$ZENML_SERVER_URL \
+--username=$ZENML_USERNAME \
+--password=$ZENML_PASSWORD
 ```
 
-Once connected to your ZenML server you will have to register a new experiment-tracker component and a new [stack](https://docs.zenml.io/starter-guide/stacks).
-In order to do so run:
+Once connected to your ZenML server you will have to register a secrets-manager to keep your experiment-tracker secrets in a safe place:
+```bash
+zenml secrets-manager register <your-secrets-manager-name> --flavor=local \
+--username=$MLFLOW_TRACKING_USERNAME \
+--password=$MLFLOW_TRACKING_PASSWORD
+```
 
+You can then create a new experiment-tracker component:
 ```bash
 zenml experiment-tracker register <your-experiment-tracker-component-name> \
- --flavor=mlflow --tracking_uri=<mflow-instance-url> \
- --tracking_username=<mlflow-username> \
- --tracking_password=<mlflow-password>
+ --flavor=mlflow --tracking_uri=$MLFLOW_TRACKING_URI \
+ --tracking_username={{<your-secrets-manager-name>.username}} \
+ --tracking_password={{<your-secrets-manager-name>.password}}
 ```
+
+And a new [stack](https://docs.zenml.io/starter-guide/stacks) (this stack will run on your local machine but you can switch to other orchestrators if you want):
 ```bash
-zenml stack register <your-new-stack-name> -o default -a default -e <your-experiment-tracker-component-name>
+zenml stack register <your-new-stack-name> \
+-o default \
+-a default \
+-e <your-experiment-tracker-component-name> \
+-x <your-secrets-manager-name>
 ```
 
 You can then activate that stack by running:
@@ -219,16 +326,22 @@ You can then activate that stack by running:
 zenml stack set <your-new-stack-name>
 ```
 
-### :alembic: Run the pipeline
+### :alembic: Run the pipelines
 
 Then you can launch the training pipeline by running:
 ```bash
 python titanic_model/run_training_pipeline.py
 ```
 
+To run the deployment pipeline and build a docker service image run:
+```bash
+python titanic_model/run_deploying_pipeline.py
+```
+
 <!-- References -->
 [Titanic Kaggle competition]: https://www.kaggle.com/competitions/titanic
 [ZenML]: https://docs.zenml.io/getting-started/introduction
+[BentoML]: https://docs.bentoml.org/en/latest/
 [Mlflow]: https://mlflow.org/
 [Heroku]: https://www.heroku.com
 [pyenv]: https://github.com/pyenv/pyenv
