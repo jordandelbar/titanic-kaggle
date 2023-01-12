@@ -9,7 +9,7 @@ from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
 from zenml.steps import step
 
 from titanic_model.config.core import config
-from titanic_model.mlflow_model_management.mlflow_model_management import (
+from titanic_model.model_registry.mlflow_client_training import (
     promote_models,
     registering_model_decision,
 )
@@ -31,7 +31,7 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
     settings={"experiment_tracker.mlflow": mlflow_settings},
 )
 def model_register(metrics: Dict) -> None:
-    """Register the model
+    """Registers the model
 
     Args:
         metrics (Dict): metrics of the trained model

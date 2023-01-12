@@ -1,7 +1,7 @@
 from typing import Dict
 
 import mlflow
-import pandas as pd
+import pandas
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -34,9 +34,9 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
     settings={"experiment_tracker.mlflow": mlflow_settings},
 )
 def model_evaluator(
-    clf_pipeline: Pipeline, X_test: pd.DataFrame, y_test: pd.Series
+    clf_pipeline: Pipeline, X_test: pandas.DataFrame, y_test: pandas.Series
 ) -> Output(metrics=Dict):
-    """Evaluate model training
+    """Evaluates model training
 
     Args:
         clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline

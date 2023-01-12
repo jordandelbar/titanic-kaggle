@@ -10,11 +10,20 @@ from zenml.steps import Output, step
 
 @step
 def bento_builder(
-    model: Pipeline, model_input_example: Dict, model_requirements: str
+    model: Pipeline, model_metadata: Dict, model_requirements: str
 ) -> Output(bentoml_service_name=str):
+    """Saves a bentoml model and build a bento service from that model
 
-    bento_model_name = "titanic_model"
-    bentoml_service_name = "titanic-service"
+    Args:
+        model (sklearn.pipeline.Pipeline): model classifier
+        model_metadata (Dict): metadata of the model
+        model_requirements (str): path to the requirements.txt
+            (dependency file) to run the model
+    Returns:
+        bentoml_service_name (str): name of the bentoml service builded
+    """
+    bento_model_name = model_metadata["bento_model_name"]
+    bentoml_service_name = f"{bento_model_name}_service"
     signatures = {"predict_proba": {"batchable": True, "batch_dim": 0}}
 
     # Saving bentoml model
@@ -25,12 +34,12 @@ def bento_builder(
     )
 
     # Persist input examples into bento workdir
-    input_example_file_path = str(
-        Path(__file__).resolve().parents[2] / "bento_service/input_examples.json"
+    model_metadata_file_path = str(
+        Path(__file__).resolve().parents[2] / "bento_service/meta.json"
     )
 
-    with open(input_example_file_path, "w") as fp:
-        json.dump(model_input_example, fp)
+    with open(model_metadata_file_path, "w") as fp:
+        json.dump(model_metadata, fp)
 
     # Build bento service
     bentoml.bentos.build(
@@ -40,6 +49,6 @@ def bento_builder(
     )
 
     # Remove input examples file
-    os.remove(input_example_file_path)
+    os.remove(model_metadata_file_path)
 
     return bentoml_service_name

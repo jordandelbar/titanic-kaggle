@@ -13,6 +13,14 @@ MODEL_CONFIG_NAME = "model_config.json"
 
 
 def check_model_exists(model_name: str) -> bool:
+    """Checks if a model exists under that name
+
+    Args:
+        model_name (str): model name to be checked
+
+    Returns:
+        bool: True if the model exists, False otherwise
+    """
     client = mlflow.MlflowClient()
     if len(client.search_registered_models(f"name='{model_name}'")):
         return True
@@ -24,6 +32,15 @@ def check_model_exists(model_name: str) -> bool:
 
 
 def check_model_stage_exist(model_name: str, stage: str) -> bool:
+    """Checks if a model is available on a certain stage
+
+    Args:
+        model_name (str): model name to be checked
+        stage (str): stage of the model to be checked
+
+    Returns:
+        bool: True if the model exists at that stage, False otherwise
+    """
     client = mlflow.MlflowClient()
     if check_model_exists(model_name=model_name):
         if len(client.get_latest_versions(name=model_name, stages=[stage])):
@@ -34,6 +51,19 @@ def check_model_stage_exist(model_name: str, stage: str) -> bool:
 
 
 def get_meta(model_name: str, stage: str) -> ModelVersion:
+    """Get the meta data of a model
+
+    Args:
+        model_name (str): model name to get metadata from
+        stage (str): stage of the model
+
+    Raises:
+        mlflow.MlflowException: raises an error if there is no
+            model at this stage
+
+    Returns:
+        ModelVersion: return ModelVersion class with model metadata
+    """
     client = mlflow.MlflowClient()
     if check_model_stage_exist(model_name=model_name, stage=stage):
         return client.get_latest_versions(name=model_name, stages=[stage])[0]
@@ -43,6 +73,15 @@ def get_meta(model_name: str, stage: str) -> ModelVersion:
 
 
 def get_model(model_name: str, stage: str) -> Any:
+    """Downloads the model from MLflow
+
+    Args:
+        model_name (str): name of the model to download
+        stage (str): stage of the model to download
+
+    Returns:
+        Any: model
+    """
     version_meta = get_meta(model_name=model_name, stage=stage)
     run_id = version_meta.run_id
     model_uri = version_meta.source
@@ -56,7 +95,21 @@ def get_model(model_name: str, stage: str) -> Any:
     return model
 
 
-def get_input_example(model_name: str, stage: str) -> Dict[str, Any]:
+def get_inputs_example(model_name: str, stage: str) -> Dict[str, Any]:
+    """Gets inputs example for the service
+
+    Args:
+        model_name (str): name of the model to get inputs example from
+        stage (str): stage of the model
+
+    Raises:
+        ValueError: raised if the format for handling the inputs example is
+            not implemented
+        mlflow.MlflowException: raised if there is no inputs example in MLflow
+
+    Returns:
+        Dict[str, Any]: returns a Json (dict) of the inputs example
+    """
     version_meta = get_meta(model_name=model_name, stage=stage)
     run_id = version_meta.run_id
     path_artifacts = version_meta.source
@@ -78,17 +131,34 @@ def get_input_example(model_name: str, stage: str) -> Dict[str, Any]:
                 example_json[col] = val
             return example_json
         else:
-            err_msg = "Example type: {example_type},  handling is not implemented"
+            err_msg = "Example type: {example_type}, handling is not implemented"
             raise ValueError(err_msg)
     else:
         raise mlflow.MlflowException("Data example is not provided")
 
 
 def get_requirements_path(model_uri: str) -> str:
+    """Gets the requirements of a requirements.txt for model dependencies
+
+    Args:
+        model_uri (str): uri of the model
+
+    Returns:
+        str: path of the dowloaded requirements.txt
+    """
     return mlflow.pyfunc.get_model_dependencies(model_uri)
 
 
-def get_model_config(model_name: str, stage: str):
+def get_model_config(model_name: str, stage: str) -> Dict[str, Any]:
+    """Gets the model config
+
+    Args:
+        model_name (str): name of the model to get the config from
+        stage (str): stage of the model
+
+    Returns:
+        Dict: dictionnary with the model config
+    """
     meta = get_meta(model_name=model_name, stage=stage)
     model_config_uri = os.path.join(meta.source.replace("model", ""), MODEL_CONFIG_NAME)
     return mlflow.artifacts.load_dict(artifact_uri=model_config_uri)

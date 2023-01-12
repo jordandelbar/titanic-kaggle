@@ -188,6 +188,7 @@ classDef server fill:#E0446D,color:#fff;
     class mlflow server
 
 ```
+:warning: Watch out that for now the bento service build and containerize are in two separate steps. Hence this pipeline will not run if you are using an orchestrator with separated stateless images for each node because the bento service will not be available in the containerize step (e.g. Vertex AI).
 
 ## :computer: How to run it locally
 

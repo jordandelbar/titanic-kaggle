@@ -13,7 +13,7 @@ from titanic_model.utils.files_management import (
 def data_loader() -> Output(
     train=pandas.DataFrame, target=pandas.Series, test=pandas.DataFrame
 ):
-    """Load the data from titanic files
+    """Loads the data from titanic files
 
     Returns:
         train (pandas.DataFrame): train data without the target column
