@@ -5,13 +5,13 @@ from typing import Dict
 
 import bentoml
 from sklearn.pipeline import Pipeline
-from zenml.steps import Output, step
+from zenml.steps import step
 
 
 @step
 def bento_builder(
     model: Pipeline, model_metadata: Dict, model_requirements: str
-) -> Output(bentoml_service_name=str):
+) -> None:
     """Saves a bentoml model and build a bento service from that model
 
     Args:
@@ -20,7 +20,7 @@ def bento_builder(
         model_requirements (str): path to the requirements.txt
             (dependency file) to run the model
     Returns:
-        bentoml_service_name (str): name of the bentoml service builded
+        None
     """
     bento_model_name = model_metadata["bento_model_name"]
     bentoml_service_name = f"{bento_model_name}_service"
@@ -33,7 +33,7 @@ def bento_builder(
         name=bento_model_name,
     )
 
-    # Persist input examples into bento workdir
+    # Persist model metadata into bento workdir
     model_metadata_file_path = str(
         Path(__file__).resolve().parents[2] / "bento_service/meta.json"
     )
@@ -48,7 +48,8 @@ def bento_builder(
         build_ctx=str(Path(__file__).resolve().parents[2] / "bento_service"),
     )
 
-    # Remove input examples file
+    # Remove metadata file
     os.remove(model_metadata_file_path)
 
-    return bentoml_service_name
+    # Containerize the bento service
+    bentoml.container.build(bento_tag=bentoml_service_name)
