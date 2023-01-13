@@ -11,7 +11,7 @@ Using [ZenML] we aim to train a model about the probability of survival for the 
 
 Once a model is trained and stored in our model registry we can deploy it on a cloud instance. We first use ZenML with [BentoML] in order to create a Docker image.
 
-### :gear: Training pipeline workflow
+### :mechanical_arm: Training pipeline workflow
 
 ```mermaid
 flowchart LR
@@ -117,7 +117,7 @@ classDef server fill:#E0446D,color:#fff;
     class mlflow server
     class kaggle server
 ```
-### :building_construction:	Deploying pipeline workflow
+### :rocket: Deploying pipeline workflow
 
 ```mermaid
 flowchart LR
@@ -188,6 +188,84 @@ classDef server fill:#E0446D,color:#fff;
     class mlflow server
 
 ```
+### :robot: Infering pipeline workflow
+
+```mermaid
+flowchart LR
+
+%% Flow definitions
+fetch_data_kaggle([Fetch Kaggle Data])
+loader([Load Data])
+preprocessor([Preprocessing Data])
+inferer([Inferer])
+
+%% Data definitions
+raw_data[(raw data)]
+test[(test)]
+train[(train)]
+target[(target)]
+test_preprocessed[(prep test)]
+test_infered[(infered<br>test)]
+
+%% artifacts definitions
+
+%% Server definitions
+kaggle(Kaggle<br>API)
+web_service(Web Service<br>API)
+
+%% Flow relationships
+fetch_data_kaggle --> loader
+loader --> preprocessor
+preprocessor --> inferer
+
+%% Data relationships
+fetch_data_kaggle .-> raw_data
+raw_data .-> loader
+loader .-> train
+loader .-> target
+loader .-> test
+test .-> preprocessor
+preprocessor .-> test_preprocessed
+test_preprocessed .-> inferer
+inferer .-> web_service
+web_service .-> inferer
+inferer .-> test_infered
+
+%% Artifacts relationships
+
+%% Server relationship
+kaggle -.- fetch_data_kaggle
+
+%% Color definitions
+classDef step fill:#009EAC,stroke:#333,stroke-width:2px,color:#fff;
+classDef data fill:#223848,stroke:#3F5A6C,color:#fff;
+classDef artifact fill:#615E9C,color:#fff;
+classDef server fill:#E0446D,color:#fff;
+
+%% Colors
+    %% Steps
+    class fetch_data_kaggle step;
+    class loader step;
+    class preprocessor step;
+    class inferer step;
+
+    %% Data
+    class raw_data data;
+    class train data;
+    class target data;
+    class test data;
+    class test_preprocessed data;
+    class test_infered data;
+
+    %% Artifacts
+    class target_definition artifact
+    class trained_model artifact
+    class metrics artifact
+
+    %% Server
+    class kaggle server
+    class web_service server
+```
 
 ## :computer: How to run it locally
 
@@ -255,6 +333,7 @@ You will also need several environment variables to run this project:
 - a `KAGGLE_USERNAME` and a `KAGGLE_KEY` to download the titanic competition dataset.
 - a `ZENML_SERVER_URL`, `ZENML_USERNAME` and `ZENML_PASSWORD` to connect to a running instance of Zenml
 - a `MLFLOW_TRACKING_URI` to your mlflow server and `MLFLOW_TRACKING_USERNAME` and `MLFLOW_TRACKING_PASSWORD` if it is protected
+- a `WEB_SERVICE_URL` to infer the test dataframe
 
 You can gather all these environment variables in a `.env` file in the root directory of this repo.
 
@@ -270,6 +349,8 @@ ZENML_PASSWORD=<your-zenml-server-password>
 MLFLOW_TRACKING_URI=<your-mlflow-tracking-uri>
 MLFLOW_TRACKING_USERNAME=<your-mlflow-username>
 MLFLOW_TRACKING_PASSWORD=<your-mlflow-password>
+# Web Service URL for inference
+WEB_SERVICE_URL=<your-web-service-url>
 # Setting up the python path
 PYTHONPATH=.
 ```
@@ -336,6 +417,20 @@ python titanic_model/run_training_pipeline.py
 To run the deployment pipeline and build a docker service image run:
 ```bash
 python titanic_model/run_deploying_pipeline.py
+```
+
+### :bellhop_bell: Run your web service API on your local machine and serve
+
+Once you built your docker image from the deploying pipeline you can run it with:
+
+```bash
+docker run -it --rm -p 3000:3000 titanic_model_service:<tag-of-your-bento-build>  serve --production
+```
+
+Once this is up and running you can infer the test dataframe:
+
+```bash
+python titanic_model/run_infering_pipeline.py
 ```
 
 <!-- References -->
