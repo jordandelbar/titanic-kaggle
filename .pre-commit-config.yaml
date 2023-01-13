@@ -44,8 +44,3 @@ repos:
     stages: [push]
     args: [--resolver=backtracking, requirements/requirements-dev.in]
     files: ^requirements/requirements-dev\.(in|txt)$
-  - id: pip-compile
-    name: pip-compile requirements-serving.in
-    stages: [push]
-    args: [--resolver=backtracking, --upgrade, requirements/requirements-serving.in]
-    files: ^requirements/requirements-serving\.(in|txt)$
