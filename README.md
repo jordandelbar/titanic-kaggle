@@ -9,7 +9,9 @@ Just having fun with the [Titanic Kaggle competition]!
 
 Using [ZenML] we aim to train a model about the probability of survival for the Titanic passengers and then upload that model on a [Mlflow] instance. If you wish to run your own Mlflow instance on [Heroku] you can check this [repo](https://github.com/jordandelbar/mlflow-heroku).
 
-Once a model is trained and stored in our model registry we can deploy it on a cloud instance. We first use ZenML with [BentoML] in order to create a Docker image.
+Once a model is trained and stored in our model registry we can deploy it on a cloud instance (you can check [Bentoctl] for that) or on our local machine. We first use ZenML with [BentoML] in order to create a Docker image.
+
+Then we can run our Docker image as a container and infer the test dataframe from the competition in order to get our probabilities of survival!
 
 ### :mechanical_arm: Training pipeline workflow
 
@@ -443,3 +445,4 @@ python titanic_model/run_infering_pipeline.py
 [pyenv]: https://github.com/pyenv/pyenv
 [miniconda]: https://docs.conda.io/en/latest/miniconda.html
 [oh-my-zsh]: https://ohmyz.sh/
+[Bentoctl]: https://github.com/bentoml/bentoctl
