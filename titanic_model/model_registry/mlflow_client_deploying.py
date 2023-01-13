@@ -129,7 +129,7 @@ def get_inputs_example(model_name: str, stage: str) -> Dict[str, Any]:
                 # workaround for pydantic model bug
                 val = data[i] + 0.1 if isinstance(data[i], float) else data[i]
                 example_json[col] = val
-            return example_json
+            return [example_json]
         else:
             err_msg = "Example type: {example_type}, handling is not implemented"
             raise ValueError(err_msg)
