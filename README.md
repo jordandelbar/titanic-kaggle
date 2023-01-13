@@ -74,9 +74,10 @@ y_test .-> evaluator
 %% Artifacts relationships
 trainer .-> trained_model
 evaluator .-> metrics
-register .-> trained_model
+metrics .-> register
 
 %% Server relationship
+register --o|rotate models| mlflow
 trained_model -.- mlflow
 metrics -.- mlflow
 kaggle -.- fetch_data_kaggle
@@ -227,7 +228,7 @@ loader .-> test
 test .-> preprocessor
 preprocessor .-> test_preprocessed
 test_preprocessed .-> inferer
-inferer .-> web_service
+inferer .->|post| web_service
 web_service .-> inferer
 inferer .-> test_infered
 
