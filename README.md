@@ -383,17 +383,15 @@ zenml connect --url=$ZENML_SERVER_URL \
 
 Once connected to your ZenML server you will have to register a secrets-manager to keep your experiment-tracker secrets in a safe place:
 ```bash
-zenml secrets-manager register <your-secrets-manager-name> --flavor=local \
---username=$MLFLOW_TRACKING_USERNAME \
---password=$MLFLOW_TRACKING_PASSWORD
+zenml secrets-manager register <your-secrets-manager-name> --flavor=local
 ```
 
 You can then create a new experiment-tracker component:
 ```bash
 zenml experiment-tracker register <your-experiment-tracker-component-name> \
  --flavor=mlflow --tracking_uri=$MLFLOW_TRACKING_URI \
- --tracking_username={{<your-secrets-manager-name>.username}} \
- --tracking_password={{<your-secrets-manager-name>.password}}
+ --tracking_username={{<your-mlflow-secret-name>.username}} \
+ --tracking_password={{<your-mlflow-secret-name>.password}}
 ```
 
 And a new [stack](https://docs.zenml.io/starter-guide/stacks) (this stack will run on your local machine but you can switch to other orchestrators if you want):
@@ -408,6 +406,16 @@ zenml stack register <your-new-stack-name> \
 You can then activate that stack by running:
 ```bash
 zenml stack set <your-new-stack-name>
+```
+
+Once your stack is activated you now have to create a secret for that stack, linked to your secret manager:
+```bash
+zenml secrets-manager secret register <your-mlflow-secret-name> --username=$MLFLOW_TRACKING_USERNAME --password=$MLFLOW_TRACKING_PASSWORD
+```
+
+You can also simply use this script that runs all the aforementioned steps
+```bash
+bash scripts/create_zenml_stack.sh
 ```
 
 ### :alembic: Run the pipelines
