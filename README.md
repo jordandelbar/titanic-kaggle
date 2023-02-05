@@ -290,12 +290,13 @@ You can check this [tutorial](https://realpython.com/intro-to-pyenv/) over pyenv
 Once the installation process is over, simply run:
 
 ```bash
-pyenv install 3.10.7
+pyenv install 3.10:latest
 ```
 
 You can then create a virtual environment running
 ```bash
-pyenv virtualenv 3.10.7 <name-of-your-venv>
+pyenv virtualenv $(pyenv versions | sort -r | grep "3.10" | head -n 1) \
+<name-of-your-venv>
 ```
 
 You can use the pyenv `local` command to set up a `.python-version` file in this directory so that pyenv
@@ -353,6 +354,7 @@ MLFLOW_TRACKING_URI=<your-mlflow-tracking-uri>
 MLFLOW_TRACKING_USERNAME=<your-mlflow-username>
 MLFLOW_TRACKING_PASSWORD=<your-mlflow-password>
 # Web Service URL for inference
+# On your local machine: http://localhost:3000/titanic_model/
 WEB_SERVICE_URL=<your-web-service-url>
 # Setting up the python path
 PYTHONPATH=.
@@ -410,7 +412,9 @@ zenml stack set <your-new-stack-name>
 
 Once your stack is activated you now have to create a secret for that stack, linked to your secret manager:
 ```bash
-zenml secrets-manager secret register <your-mlflow-secret-name> --username=$MLFLOW_TRACKING_USERNAME --password=$MLFLOW_TRACKING_PASSWORD
+zenml secrets-manager secret register <your-mlflow-secret-name> \
+--username=$MLFLOW_TRACKING_USERNAME \
+--password=$MLFLOW_TRACKING_PASSWORD
 ```
 
 You can also simply use this script that runs all the aforementioned steps
@@ -435,7 +439,15 @@ python titanic_model/run_deploying_pipeline.py
 Once you built your docker image from the deploying pipeline you can run it with:
 
 ```bash
-docker run -it --rm -p 3000:3000 titanic_model_service:<tag-of-your-bento-build>  serve --production
+docker run -it --rm -p 3000:3000 \
+titanic_model_service:<tag-of-your-bento-build> \
+serve --production
+```
+
+Or simply run
+
+```
+bash scripts/run_service.sh
 ```
 
 Once this is up and running you can infer the test dataframe:
