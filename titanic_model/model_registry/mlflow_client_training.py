@@ -1,3 +1,4 @@
+"""Mlflow functions for model training."""
 from typing import Dict, List, Tuple
 
 import numpy
@@ -5,7 +6,7 @@ from mlflow import MlflowClient
 
 
 def _get_registered_models(model_name: str) -> Dict:
-    """Returns all the registered models under a certain name in Mlflow
+    """Return all the registered models under a certain name in Mlflow.
 
     Args:
         model_name (str): name of the models registered
@@ -30,7 +31,7 @@ def _get_registered_models(model_name: str) -> Dict:
 
 
 def _get_metric_list(model_dictionnary: Dict, metric: str) -> List[float]:
-    """Returns a metric list for all registered model in a dictionnary
+    """Return a metric list for all registered model in a dictionnary.
 
     Args:
         model_dictionnary (Dict): dict of models registered
@@ -55,7 +56,7 @@ def _get_metric_list(model_dictionnary: Dict, metric: str) -> List[float]:
 def _get_best_models_in_mlflow(
     model_name: str, metric_to_check: str
 ) -> List[Tuple[str, float]]:
-    """Returns the two best models registered in the Mlflow server
+    """Return the two best models registered in the Mlflow server.
 
     Args:
         model_name (str): name of the model to be checked
@@ -93,7 +94,7 @@ def _get_best_models_in_mlflow(
 
 
 def _get_second_best_model_metric(model_name: str, metric_to_check: str) -> float:
-    """Returns the second best model metric
+    """Return the second best model metric.
 
     Args:
         model_name (str): name of the model
@@ -110,7 +111,7 @@ def _get_second_best_model_metric(model_name: str, metric_to_check: str) -> floa
 def registering_model_decision(
     model_name: str, model_accuracy: float, model_f1_score: float
 ) -> bool:
-    """Decision engine to decide if a model should be registered or not
+    """Decision engine to decide if a model should be registered or not.
 
     Args:
         model_name (str): name of the model on the Mlflow server
@@ -143,8 +144,7 @@ def registering_model_decision(
 
 
 def promote_models(model_name: str, metric_to_check: str) -> None:
-    """Promoting engine to clean all the model and put them in the
-       correct stage
+    """Promoting engine to clean all the model and put them in the correct stage.
 
     Args:
         model_name (str): name of the model on the Mlflow server

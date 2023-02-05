@@ -1,3 +1,4 @@
+"""Preprocess the data."""
 import numpy
 import pandas
 from zenml.steps import Output, step
@@ -7,7 +8,7 @@ from titanic_model.config.core import config
 
 @step
 def preprocessor(X: pandas.DataFrame) -> Output(X_pp=pandas.DataFrame):
-    """Preprocesses the data before the training of our model
+    """Preprocess the data before the training of our model.
 
     Args:
         X (pandas.DataFrame): train or test dataframe

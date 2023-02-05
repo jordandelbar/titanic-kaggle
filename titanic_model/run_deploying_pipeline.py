@@ -1,3 +1,4 @@
+"""Run the deploying pipeline."""
 from pipelines.deploying_pipeline import deploying_pipeline
 from steps.model_fetcher.model_fetcher import model_fetcher
 

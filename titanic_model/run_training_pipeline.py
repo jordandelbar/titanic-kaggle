@@ -1,3 +1,4 @@
+"""Run the training pipeline."""
 from pipelines.training_pipeline import training_pipeline
 from steps.data_loader.pandas_data_loader import data_loader
 from steps.data_preprocessing.pandas_preprocessor import preprocessor

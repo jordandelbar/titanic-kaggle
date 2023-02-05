@@ -1,3 +1,4 @@
+"""Build the BentoML service image."""
 import json
 import os
 from pathlib import Path
@@ -12,7 +13,7 @@ from zenml.steps import step
 def bento_builder(
     model: Pipeline, model_metadata: Dict, model_requirements: str
 ) -> None:
-    """Saves a bentoml model and build a bento service from that model
+    """Save a bentoml model and build a bento service from that model.
 
     Args:
         model (sklearn.pipeline.Pipeline): model classifier
