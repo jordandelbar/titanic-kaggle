@@ -1,3 +1,4 @@
+"""Config file management."""
 from pathlib import Path
 from typing import Dict, List
 
@@ -6,6 +7,8 @@ from zenml.steps import BaseParameters
 
 
 class TrainingConfig(BaseParameters):
+    """Training parameters."""
+
     model_name: str
     experiment_name: str
     kaggle_competition: str
@@ -33,7 +36,7 @@ CONFIG_FILE_PATH = MLPIPELINE_ROOT / "config.yaml"
 
 
 def find_config_file() -> Path:
-    """Locate config file
+    """Locate config file.
 
     Raises:
         Exception: when the config file is not found
@@ -41,14 +44,13 @@ def find_config_file() -> Path:
     Returns:
         Path: Path of the config file
     """
-
     if CONFIG_FILE_PATH.is_file():
         return CONFIG_FILE_PATH
     raise Exception(f"Config file not found at {CONFIG_FILE_PATH!r}")
 
 
 def fetch_config_yaml(cfg_path: Path = None) -> TrainingConfig:
-    """Parse the yaml config file
+    """Parse the yaml config file.
 
     Args:
         cfg_path (Path, optional): Path of the config file. Defaults to None.
@@ -59,7 +61,6 @@ def fetch_config_yaml(cfg_path: Path = None) -> TrainingConfig:
     Returns:
         TrainingConfig: training configuration
     """
-
     if not cfg_path:
         cfg_path = find_config_file()
 
@@ -71,7 +72,7 @@ def fetch_config_yaml(cfg_path: Path = None) -> TrainingConfig:
 
 
 def create_and_validate_config(parsed_config: TrainingConfig = None) -> TrainingConfig:
-    """Create and validate config
+    """Create and validate config.
 
     Args:
         parsed_config (TrainingConfig, optional): Config parsed. Defaults to None.

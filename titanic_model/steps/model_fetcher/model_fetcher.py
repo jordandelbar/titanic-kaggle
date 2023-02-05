@@ -1,3 +1,4 @@
+"""Fetch the model from MLflow."""
 from typing import Dict
 
 from sklearn.pipeline import Pipeline
@@ -17,7 +18,7 @@ def model_fetcher() -> Output(
     model_metadata=Dict,
     model_requirements=str,
 ):
-    """Fetches the model from model registry
+    """Fetch the model from model registry.
 
     Returns:
         model (sklearn.pipeline.Pipeline): model classifier

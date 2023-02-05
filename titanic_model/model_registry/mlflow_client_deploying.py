@@ -1,3 +1,4 @@
+"""Mlflow functions for model deployment."""
 import importlib
 import json
 import logging
@@ -13,7 +14,7 @@ MODEL_CONFIG_NAME = "model_config.json"
 
 
 def check_model_exists(model_name: str) -> bool:
-    """Checks if a model exists under that name
+    """Check if a model exists under that name.
 
     Args:
         model_name (str): model name to be checked
@@ -32,7 +33,7 @@ def check_model_exists(model_name: str) -> bool:
 
 
 def check_model_stage_exist(model_name: str, stage: str) -> bool:
-    """Checks if a model is available on a certain stage
+    """Check if a model is available on a certain stage.
 
     Args:
         model_name (str): model name to be checked
@@ -51,7 +52,7 @@ def check_model_stage_exist(model_name: str, stage: str) -> bool:
 
 
 def get_meta(model_name: str, stage: str) -> ModelVersion:
-    """Get the meta data of a model
+    """Get the meta data of a model.
 
     Args:
         model_name (str): model name to get metadata from
@@ -73,7 +74,7 @@ def get_meta(model_name: str, stage: str) -> ModelVersion:
 
 
 def get_model(model_name: str, stage: str) -> Any:
-    """Downloads the model from MLflow
+    """Download the model from MLflow.
 
     Args:
         model_name (str): name of the model to download
@@ -96,7 +97,7 @@ def get_model(model_name: str, stage: str) -> Any:
 
 
 def get_inputs_example(model_name: str, stage: str) -> Dict[str, Any]:
-    """Gets inputs example for the service
+    """Get inputs example for the service.
 
     Args:
         model_name (str): name of the model to get inputs example from
@@ -138,7 +139,7 @@ def get_inputs_example(model_name: str, stage: str) -> Dict[str, Any]:
 
 
 def get_requirements_path(model_uri: str) -> str:
-    """Gets the requirements of a requirements.txt for model dependencies
+    """Get the requirements of a requirements.txt for model dependencies.
 
     Args:
         model_uri (str): uri of the model
@@ -150,7 +151,7 @@ def get_requirements_path(model_uri: str) -> str:
 
 
 def get_model_config(model_name: str, stage: str) -> Dict[str, Any]:
-    """Gets the model config
+    """Get the model config.
 
     Args:
         model_name (str): name of the model to get the config from

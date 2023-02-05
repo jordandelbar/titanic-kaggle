@@ -1,3 +1,4 @@
+"""Train the model."""
 import mlflow
 import pandas
 from sklearn.pipeline import Pipeline
@@ -30,7 +31,7 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
 def trainer(
     X_train: pandas.DataFrame, y_train: pandas.Series
 ) -> Output(clf_pipeline=Pipeline):
-    """Trains the model on the training dataframe
+    """Train the model on the training dataframe.
 
     Args:
         X_train (pandas.DataFrame): train dataframe to be used for model training
@@ -39,7 +40,6 @@ def trainer(
     Returns:
         clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline
     """
-
     mlflow.log_dict(config.dict(), "model_config.json")
     mlflow.sklearn.autolog(log_input_examples=True)
 

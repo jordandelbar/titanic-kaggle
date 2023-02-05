@@ -1,3 +1,4 @@
+"""Training pipeline."""
 from zenml.config import DockerSettings
 from zenml.pipelines import pipeline
 
@@ -6,6 +7,16 @@ docker_settings = DockerSettings(replicate_local_python_environment="pip_freeze"
 
 @pipeline(enable_cache=False, settings={"docker": docker_settings})
 def training_pipeline(loader, preprocessor, splitter, trainer, evaluator, register):
+    """Pipeline to train our model.
+
+    Args:
+        loader: loads the data for training
+        preprocessor: preprocesses the data
+        splitter: split the data into train & test data
+        trainer: trains the model
+        evaluator: evaluate the model metrics
+        register: registers the model to the MLflow server
+    """
     # Load the data
     train, target, test = loader()
 

@@ -19,4 +19,6 @@ zenml stack register $stack_name \
 
 zenml stack set $stack_name
 
-zenml secrets-manager secret register $mlflow_secret_name --username=$MLFLOW_TRACKING_USERNAME --password=$MLFLOW_TRACKING_PASSWORD
+zenml secrets-manager secret register $mlflow_secret_name \
+--username=$MLFLOW_TRACKING_USERNAME \
+--password=$MLFLOW_TRACKING_PASSWORD

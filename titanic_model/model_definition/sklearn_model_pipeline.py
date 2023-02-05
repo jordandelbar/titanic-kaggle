@@ -1,3 +1,4 @@
+"""Model definition."""
 from feature_engine.encoding import MeanEncoder, RareLabelEncoder
 from feature_engine.imputation import CategoricalImputer, MeanMedianImputer
 from sklearn.compose import ColumnTransformer

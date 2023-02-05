@@ -1,3 +1,4 @@
+"""Run the infering pipeline."""
 from pipelines.infering_pipeline import infering_pipeline
 from steps.data_inferer.pandas_inferer import inferer
 from steps.data_loader.pandas_data_loader import data_loader

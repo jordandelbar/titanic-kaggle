@@ -1,3 +1,4 @@
+"""Split the data in train/test sets."""
 import pandas
 from sklearn.model_selection import train_test_split
 from zenml.steps import Output, step
@@ -14,7 +15,7 @@ def data_splitter(
     y_train=pandas.Series,
     y_test=pandas.Series,
 ):
-    """Splits the data into training and testing dataframes
+    """Split the data into training and testing dataframes.
 
     Args:
         train (pandas.DataFrame): train data without the target column
@@ -26,7 +27,6 @@ def data_splitter(
         y_train (pandas.Series): target series to be used for model training
         y_test (pandas.Series): target series to be used for model evaluation
     """
-
     X_train, X_test, y_train, y_test = train_test_split(
         train, target, test_size=config.test_size, random_state=config.random_state
     )

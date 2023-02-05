@@ -3,6 +3,13 @@ line-length = 88
 target-version = ['py310']
 include = '\.pyi?$'
 
-[tool.isort]
-profile = "black"
-line_length = 88
+[tool.ruff]
+line-length = 88
+fix = true
+select = ["D", "E", "F", "I", "N"]
+ignore = ["D104", "D105", "N803", "N806"]
+fixable = ["E", "F", "I"]
+unfixable = []
+
+[tool.ruff.pydocstyle]
+convention = "google"

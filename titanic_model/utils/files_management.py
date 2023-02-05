@@ -1,3 +1,4 @@
+"""Utilities to manage the different files in the repository."""
 import os
 import zipfile
 from pathlib import Path
@@ -7,7 +8,7 @@ from kaggle.api.kaggle_api_extended import KaggleApi
 
 
 def return_datasets_path() -> str:
-    """Returns the datasets folder path
+    """Return the datasets folder path.
 
     Returns:
         str: path of the datasets folder
@@ -16,7 +17,7 @@ def return_datasets_path() -> str:
 
 
 def check_if_files_exists(file_list: List[str]) -> bool:
-    """Returns True if all the files in the list exists
+    """Return True if all the files in the list exists.
 
     Args:
         path (str): path to the directory to be checked
@@ -29,8 +30,7 @@ def check_if_files_exists(file_list: List[str]) -> bool:
 
 
 def download_files_from_kaggle(kaggle_competition: str) -> None:
-    """Download the dataset of a kaggle competition, unzip it
-       and remove the zip file afterwards
+    """Download the dataset of a kaggle competition.
 
     Args:
         kaggle_competition (str): name of the kaggle competition to

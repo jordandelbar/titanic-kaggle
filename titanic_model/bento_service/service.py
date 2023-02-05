@@ -1,3 +1,4 @@
+"""BentoML service."""
 import json
 from typing import Dict, List
 
@@ -26,6 +27,14 @@ Input = JSON.from_sample(inputs_example)
 
 @svc.api(input=Input, output=JSON(), doc=DOC, name=model_name)
 def predict_bentoml(input_data: List[Dict]) -> Dict[str, float]:
+    """Predict probability of survival.
+
+    Args:
+        input_data (List[Dict]): inputs to infer with
+
+    Returns:
+        Dict[str, float]: inference probability
+    """
     if isinstance(input_data, Dict):
         input_data = [input_data]
     input_df = pandas.DataFrame(input_data)

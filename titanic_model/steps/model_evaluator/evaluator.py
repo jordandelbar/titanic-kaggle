@@ -1,3 +1,4 @@
+"""Evaluate the model."""
 from typing import Dict
 
 import mlflow
@@ -34,9 +35,11 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
     settings={"experiment_tracker.mlflow": mlflow_settings},
 )
 def model_evaluator(
-    clf_pipeline: Pipeline, X_test: pandas.DataFrame, y_test: pandas.Series
+    clf_pipeline: Pipeline,
+    X_test: pandas.DataFrame,
+    y_test: pandas.Series,
 ) -> Output(metrics=Dict):
-    """Evaluates model training
+    """Evaluate model training.
 
     Args:
         clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline
@@ -46,7 +49,6 @@ def model_evaluator(
     Returns:
         metrics (Dict): dictionnary with the different evaluation metrics
     """
-
     y_predict_proba = clf_pipeline.predict_proba(X_test)[:, 1]
     y_predict = clf_pipeline.predict(X_test)
 

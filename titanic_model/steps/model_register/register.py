@@ -1,3 +1,4 @@
+"""Register the model to MLflow server."""
 from typing import Dict
 
 import mlflow
@@ -31,7 +32,7 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
     settings={"experiment_tracker.mlflow": mlflow_settings},
 )
 def model_register(metrics: Dict) -> None:
-    """Registers the model
+    """Register the model.
 
     Args:
         metrics (Dict): metrics of the trained model
@@ -39,7 +40,6 @@ def model_register(metrics: Dict) -> None:
     Returns:
         None
     """
-
     try:
         if registering_model_decision(
             model_name=config.model_name,

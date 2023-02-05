@@ -4,6 +4,5 @@
 pre-commit
 
 # Linting
-flake8
+ruff
 black
-isort
