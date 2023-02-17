@@ -49,7 +49,7 @@ def model_evaluator(
     Returns:
         metrics (Dict): dictionnary with the different evaluation metrics
     """
-    y_predict_proba = clf_pipeline.predict_proba(X_test)[:, 1]
+    y_predict_proba = clf_pipeline.predict_proba(X_test)
     y_predict = clf_pipeline.predict(X_test)
 
     metrics = {
