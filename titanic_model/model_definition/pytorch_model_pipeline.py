@@ -31,9 +31,11 @@ class LogisticRegression(torch.nn.Module, BaseEstimator, TransformerMixin):
             loss_func (_type_, optional): Loss function. Defaults to torch.nn.BCELoss().
         """
         super(LogisticRegression, self).__init__()
-        self.linear = torch.nn.Linear(input_dim, output_dim)
+        self.input_dim = input_dim
+        self.output_dim = output_dim
         self.loss_func = loss_func
         self.epochs = epochs
+        self.linear = torch.nn.Linear(self.input_dim, self.output_dim)
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.01)
 
     def forward(self, x):

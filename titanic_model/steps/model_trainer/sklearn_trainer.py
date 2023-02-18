@@ -45,6 +45,10 @@ def trainer(
 
     clf_pipeline = titanic_pipeline.fit(X=X_train, y=y_train)
 
-    mlflow.sklearn.log_model(sk_model=clf_pipeline, artifact_path="model")
+    mlflow.sklearn.log_model(
+        sk_model=clf_pipeline,
+        artifact_path="model",
+        input_example=X_train.loc[0].to_dict(),
+    )
 
     return clf_pipeline
