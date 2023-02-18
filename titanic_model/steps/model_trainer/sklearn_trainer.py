@@ -36,7 +36,6 @@ def trainer(
     Args:
         X_train (pandas.DataFrame): train dataframe to be used for model training
         y_train (pandas.Series): target series to be used for model training
-
     Returns:
         clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline
     """
