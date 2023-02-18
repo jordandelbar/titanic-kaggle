@@ -10,7 +10,7 @@ from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
 from zenml.steps import Output, step
 
 from titanic_model.config.core import config
-from titanic_model.model_definition.pytorch_model_pipeline import titanic_pipeline
+from titanic_model.model_definition.sklearn_model_pipeline import titanic_pipeline
 
 experiment_tracker = Client().active_stack.experiment_tracker
 
@@ -36,19 +36,12 @@ def trainer(
     Args:
         X_train (pandas.DataFrame): train dataframe to be used for model training
         y_train (pandas.Series): target series to be used for model training
-
     Returns:
         clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline
     """
     mlflow.log_dict(config.dict(), "model_config.json")
-    # mlflow.sklearn.autolog(log_input_examples=True)
+    mlflow.sklearn.autolog(log_input_examples=True)
 
-    clf_pipeline = titanic_pipeline.fit(X=X_train, y=y_train)
+    titanic_pipeline.fit(X=X_train, y=y_train)
 
-    mlflow.sklearn.log_model(
-        sk_model=clf_pipeline,
-        artifact_path="model",
-        input_example=X_train.loc[0].to_dict(),
-    )
-
-    return clf_pipeline
+    return titanic_pipeline
