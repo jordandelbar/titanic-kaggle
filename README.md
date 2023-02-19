@@ -7,11 +7,11 @@
 
 Just having fun with the [Titanic Kaggle competition]!
 
-Using [ZenML] we aim to train a model about the probability of survival for the Titanic passengers and then upload that model on a [Mlflow] instance. If you wish to run your own Mlflow instance on [Heroku] you can check this [repo](https://github.com/jordandelbar/mlflow-heroku).
+We use [ZenML] to create a training pipeline and upload the trained model to an [MLflow] instance. If you want to run your own MLflow instance on [Heroku], you can check out this repo.
 
-Once a model is trained and stored in our model registry we can deploy it on a cloud instance (you can check [Bentoctl] for that) or on our local machine. We first use ZenML with [BentoML] in order to create a Docker image.
+Once the model is trained and stored in our model registry, we can deploy it to a cloud instance (using [Bentoctl]) or to a local machine. First, we use ZenML with [BentoML] to create a Docker image.
 
-Then we can run our Docker image as a container and infer the test dataframe from the competition in order to get our probabilities of survival!
+After creating the Docker image, we can run it as a container to infer the test dataframe from the competition and get the probabilities of survival!
 
 ### :mechanical_arm: Training pipeline workflow
 
@@ -283,9 +283,9 @@ git glone https://github.com/jordandelbar/titanic-model.git
 
 ### :globe_with_meridians: Setting up your python virtual environment
 
-I ran this code using `python 3.10.7`. To install it on your computer and manage several versions of python I recommend using [pyenv].
+I ran this code using `python 3.10.7`. To install it on your computer and manage several versions of python, I recommend using [pyenv].
 
-You can check this [tutorial](https://realpython.com/intro-to-pyenv/) over pyenv. Pyenv is only available for Linux & MacOS so look for [miniconda] if you have a Windows OS (this tutorial assume you are on Linux or MacOS).
+You can check out this [tutorial](https://realpython.com/intro-to-pyenv/) over pyenv. Pyenv is only available for Linux & MacOS so look for [miniconda] if you have a Windows OS (this tutorial assumes you are on Linux or macOS).
 
 Once the installation process is over, simply run:
 
@@ -293,20 +293,19 @@ Once the installation process is over, simply run:
 pyenv install 3.10:latest
 ```
 
-You can then create a virtual environment running
+1. You can then create a virtual environment running
 ```bash
 pyenv virtualenv $(pyenv versions | sort -r | grep "3.10" | head -n 1) \
 <name-of-your-venv>
 ```
 
-You can use the pyenv `local` command to set up a `.python-version` file in this directory so that pyenv
-automatically activate the virtual environment when entering this folder by running:
+You can use the pyenv `local` command to set up a `.python-version` file in this directory so that pyenv automatically activates the virtual environment when entering this folder by running:
 
 ```bash
 pyenv local <name-of-your-venv>
 ```
 
-Or you can either use the python built-in virtual environment function and run:
+2. Alternatively, you can use the Python built-in virtual environment function and run:
 ```bash
 python -m venv .venv/<name-of-your-venv>
 ```
@@ -335,8 +334,8 @@ bash scripts/install_dependencies.sh
 
 You will also need several environment variables to run this project:
 - a `KAGGLE_USERNAME` and a `KAGGLE_KEY` to download the titanic competition dataset.
-- a `ZENML_SERVER_URL`, `ZENML_USERNAME` and `ZENML_PASSWORD` to connect to a running instance of Zenml
-- a `MLFLOW_TRACKING_URI` to your mlflow server and `MLFLOW_TRACKING_USERNAME` and `MLFLOW_TRACKING_PASSWORD` if it is protected
+- a `ZENML_SERVER_URL`, `ZENML_USERNAME` and `ZENML_PASSWORD` to connect to a running instance of ZenML
+- a `MLFLOW_TRACKING_URI` to your MLflow server and `MLFLOW_TRACKING_USERNAME` and `MLFLOW_TRACKING_PASSWORD` if it is protected
 - a `WEB_SERVICE_URL` to infer the test dataframe
 
 You can gather all these environment variables in a `.env` file in the root directory of this repo.
@@ -371,7 +370,7 @@ For the Kaggle credentials you can also download a `kaggle.json` file from your 
 
 ### :shinto_shrine: Spin up your ZenML server
 
-To spin up a ZenML server on your local machine ou can run:
+To spin up a ZenML server on your local machine you can run:
 ```bash
 zenml up --docker
 ```
@@ -410,21 +409,21 @@ You can then activate that stack by running:
 zenml stack set <your-new-stack-name>
 ```
 
-Once your stack is activated you now have to create a secret for that stack, linked to your secret manager:
+After activating your stack, you need to create a secret for it, linked to your secret manager:
 ```bash
 zenml secrets-manager secret register <your-mlflow-secret-name> \
 --username=$MLFLOW_TRACKING_USERNAME \
 --password=$MLFLOW_TRACKING_PASSWORD
 ```
 
-You can also simply use this script that runs all the aforementioned steps
+You can also simply use this script which runs all the aforementioned steps
 ```bash
 bash scripts/create_zenml_stack.sh
 ```
 
 ### :alembic: Run the pipelines
 
-Then you can launch the training pipeline by running:
+Launch the training pipeline by running:
 ```bash
 python titanic_model/run_training_pipeline.py
 ```
@@ -444,13 +443,13 @@ titanic_model_service:<tag-of-your-bento-build> \
 serve --production
 ```
 
-Or simply run
+Or run:
 
 ```
 bash scripts/run_service.sh
 ```
 
-Once this is up and running you can infer the test dataframe:
+Once the web service API is up and running you can infer the test dataframe:
 
 ```bash
 python titanic_model/run_infering_pipeline.py
