@@ -50,6 +50,13 @@ def model_evaluator(
         metrics (Dict): dictionnary with the different evaluation metrics
     """
     y_predict_proba = clf_pipeline.predict_proba(X_test)
+    # If the probability has two outputs clause (sklearn)
+    try:
+        if y_predict_proba.shape[1] == 2:
+            y_predict_proba = y_predict_proba[:, 1]
+    except IndexError:
+        pass
+
     y_predict = clf_pipeline.predict(X_test)
 
     metrics = {

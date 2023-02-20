@@ -1,4 +1,5 @@
 """Model definition."""
+import mlflow
 import numpy
 import pandas
 import torch
@@ -12,7 +13,9 @@ from sklearn.preprocessing import StandardScaler
 from titanic_model.config.core import config
 
 
-class LogisticRegression(torch.nn.Module, BaseEstimator, TransformerMixin):
+class LogisticRegression(
+    torch.nn.Module, BaseEstimator, TransformerMixin, mlflow.pyfunc.PythonModel
+):
     """Logistic Regression in PyTorch."""
 
     def __init__(
@@ -53,7 +56,6 @@ class LogisticRegression(torch.nn.Module, BaseEstimator, TransformerMixin):
         iter = 0
         epochs = self.epochs
         for epoch in range(0, epochs):
-
             pred_y = self.forward(X)
 
             # Compute and print loss

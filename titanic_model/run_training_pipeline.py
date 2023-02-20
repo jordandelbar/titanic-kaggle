@@ -5,7 +5,7 @@ from steps.data_preprocessing.pandas_preprocessor import preprocessor
 from steps.data_splitter.sklearn_data_splitter import data_splitter
 from steps.model_evaluator.evaluator import model_evaluator
 from steps.model_register.register import model_register
-from steps.model_trainer.sklearn_trainer import trainer
+from steps.model_trainer.pytorch_trainer import trainer
 
 run = training_pipeline(
     loader=data_loader(),
