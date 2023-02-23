@@ -20,17 +20,3 @@ repos:
   rev: 'v0.0.241'
   hooks:
     - id: ruff
-
-- repo: https://github.com/jazzband/pip-tools
-  rev: 6.12.0
-  hooks:
-  - id: pip-compile
-    name: pip-compile requirements.in
-    stages: [push]
-    args: [--resolver=backtracking, requirements/requirements.in]
-    files: ^requirements/requirements\.(in|txt)$
-  - id: pip-compile
-    name: pip-compile requirements-dev.in
-    stages: [push]
-    args: [--resolver=backtracking, requirements/requirements-dev.in]
-    files: ^requirements/requirements-dev\.(in|txt)$
