@@ -1,8 +1,0 @@
--r requirements.in
-
-# pre-commit hooks
-pre-commit
-
-# Linting
-ruff
-black
