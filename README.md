@@ -283,7 +283,7 @@ git glone https://github.com/jordandelbar/titanic-model.git
 
 ### :globe_with_meridians: Setting up your python virtual environment
 
-I ran this code using `python 3.10.7`. To install it on your computer and manage several versions of python, I recommend using [pyenv].
+I ran this code using `python 3.10`. To install it on your computer and manage several versions of python I recommend using [pyenv].
 
 You can check out this [tutorial](https://realpython.com/intro-to-pyenv/) over pyenv. Pyenv is only available for Linux & MacOS so look for [miniconda] if you have a Windows OS (this tutorial assumes you are on Linux or macOS).
 
@@ -293,41 +293,27 @@ Once the installation process is over, simply run:
 pyenv install 3.10:latest
 ```
 
-1. You can then create a virtual environment running
-```bash
-pyenv virtualenv $(pyenv versions | sort -r | grep "3.10" | head -n 1) \
-<name-of-your-venv>
-```
-
-You can use the pyenv `local` command to set up a `.python-version` file in this directory so that pyenv automatically activates the virtual environment when entering this folder by running:
+You can use the pyenv `local` command to set up a `.python-version` file in this directory so that pyenv
+automatically activate the correct python version when entering this folder by running:
 
 ```bash
-pyenv local <name-of-your-venv>
-```
-
-2. Alternatively, you can use the Python built-in virtual environment function and run:
-```bash
-python -m venv .venv/<name-of-your-venv>
-```
-
-That you can activate using:
-```bash
-source .venv/<name-of-your-venv>/bin/activate
+pyenv local 3.10.<latest-version>
 ```
 
 ### :package: Install the different dependencies
 
-Once your virtual environment is set up you can simply run:
-```bash
-pip install -r requirements/requirements-dev.txt
+I use [Poetry] as a package manager. You can find information to how to install it on the documentation page.
+
+To install the different packages needed to run the pipelines run:
+
 ```
-To install the pre-commit hooks:
-```bash
-pre-commit install
+poetry install --no-root
 ```
-You can also use the bash script that wraps up those two commands:
-```bash
-bash scripts/install_dependencies.sh
+
+Poetry will create a virtual environment for you that you can activate by running:
+
+```
+poetry shell
 ```
 
 ### :seedling: Environment variables
@@ -462,6 +448,7 @@ python titanic_model/run_infering_pipeline.py
 [Mlflow]: https://mlflow.org/
 [Heroku]: https://www.heroku.com
 [pyenv]: https://github.com/pyenv/pyenv
+[Poetry]: https://python-poetry.org/docs/
 [miniconda]: https://docs.conda.io/en/latest/miniconda.html
 [oh-my-zsh]: https://ohmyz.sh/
 [Bentoctl]: https://github.com/bentoml/bentoctl
