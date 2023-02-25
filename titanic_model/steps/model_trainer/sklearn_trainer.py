@@ -1,6 +1,6 @@
 """Train the model."""
 import mlflow
-import pandas
+import polars
 from sklearn.pipeline import Pipeline
 from zenml.client import Client
 from zenml.integrations.mlflow.experiment_trackers import MLFlowExperimentTracker
@@ -29,7 +29,7 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
     settings={"experiment_tracker.mlflow": mlflow_settings},
 )
 def trainer(
-    X_train: pandas.DataFrame, y_train: pandas.Series
+    X_train: polars.DataFrame, y_train: polars.DataFrame
 ) -> Output(clf_pipeline=Pipeline):
     """Train the model on the training dataframe.
 
@@ -41,7 +41,8 @@ def trainer(
     """
     mlflow.log_dict(config.dict(), "model_config.json")
     mlflow.sklearn.autolog(log_input_examples=True)
-
-    titanic_pipeline.fit(X=X_train, y=y_train)
+    print(X_train)
+    print(y_train)
+    titanic_pipeline.fit(X=X_train.to_pandas(), y=y_train.to_pandas())
 
     return titanic_pipeline

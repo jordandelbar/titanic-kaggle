@@ -2,7 +2,7 @@
 from typing import Dict
 
 import mlflow
-import pandas
+import polars
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -36,8 +36,8 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
 )
 def model_evaluator(
     clf_pipeline: Pipeline,
-    X_test: pandas.DataFrame,
-    y_test: pandas.Series,
+    X_test: polars.DataFrame,
+    y_test: polars.DataFrame,
 ) -> Output(metrics=Dict):
     """Evaluate model training.
 
@@ -49,15 +49,17 @@ def model_evaluator(
     Returns:
         metrics (Dict): dictionnary with the different evaluation metrics
     """
-    y_predict_proba = clf_pipeline.predict_proba(X_test)[:, 1]
-    y_predict = clf_pipeline.predict(X_test)
+    y_predict_proba = clf_pipeline.predict_proba(X_test.to_pandas())[:, 1]
+    y_predict = clf_pipeline.predict(X_test.to_pandas())
 
     metrics = {
-        "precision": precision_score(y_true=y_test, y_pred=y_predict),
-        "recall": recall_score(y_true=y_test, y_pred=y_predict),
-        "f1 score": f1_score(y_true=y_test, y_pred=y_predict),
-        "accuracy": accuracy_score(y_true=y_test, y_pred=y_predict),
-        "roc auc score": roc_auc_score(y_true=y_test, y_score=y_predict_proba),
+        "precision": precision_score(y_true=y_test.to_numpy(), y_pred=y_predict),
+        "recall": recall_score(y_true=y_test.to_numpy(), y_pred=y_predict),
+        "f1 score": f1_score(y_true=y_test.to_numpy(), y_pred=y_predict),
+        "accuracy": accuracy_score(y_true=y_test.to_numpy(), y_pred=y_predict),
+        "roc auc score": roc_auc_score(
+            y_true=y_test.to_numpy(), y_score=y_predict_proba
+        ),
     }
     mlflow.log_metrics(metrics=metrics)
     return metrics
