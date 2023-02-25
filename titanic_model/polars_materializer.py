@@ -36,7 +36,7 @@ class PolarsMaterializer(BaseMaterializer):
             data_type: The type of the data to read.
 
         Returns:
-            The pandas dataframe or series.
+            The polars dataframe or series.
         """
         super().load(data_type)
         with fileio.open(self.parquet_path, mode="rb") as f:
@@ -45,10 +45,10 @@ class PolarsMaterializer(BaseMaterializer):
         return df
 
     def save(self, df: Union[polars.DataFrame, polars.Series]) -> None:
-        """Write a pandas dataframe or series to the specified filename.
+        """Write a polars dataframe or series to the specified filename.
 
         Args:
-            df: The pandas dataframe or series to write.
+            df: The polars dataframe or series to write.
         """
         super().save(df)
 
