@@ -1,21 +1,19 @@
 """Fetch the model from MLflow."""
 from typing import Dict
 
-import mlflow
-from sklearn.pipeline import Pipeline
-from zenml.steps import Output, step
-
-from titanic_model.model_registry.mlflow_client_deploying import (
+import mlflow.pyfunc
+from model_registry.mlflow_client_deploying import (
     get_inputs_example,
     get_meta,
     get_requirements_path,
 )
+from zenml.steps import Output, step
 
 
 @step
 def model_fetcher() -> (
     Output(
-        model=Pipeline,
+        model=mlflow.pyfunc.PyFuncModel,
         model_metadata=Dict,
         model_requirements=str,
     )
@@ -32,7 +30,7 @@ def model_fetcher() -> (
     stage = "Production"  # TODO: config
 
     # model = get_model(model_name=model_name, stage=stage)
-    model = mlflow.sklearn.load_model(model_uri=f"models:/{model_name}/{stage}")
+    model = mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/{stage}")
     model_requirements = get_requirements_path(
         model_uri=f"models:/{model_name}/{stage}"
     )

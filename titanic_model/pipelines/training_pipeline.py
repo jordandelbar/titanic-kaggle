@@ -27,10 +27,10 @@ def training_pipeline(loader, preprocessor, splitter, trainer, evaluator, regist
     X_train, X_test, y_train, y_test = splitter(preprocessed_train, target)
 
     # Train the model
-    clf_pipeline = trainer(X_train, y_train)
+    model = trainer(X_train, y_train)
 
     # Evaluate the model
-    metrics = evaluator(clf_pipeline, X_test, y_test)
+    metrics = evaluator(model, X_test, y_test)
 
     # Register the model
     _ = register(metrics)

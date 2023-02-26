@@ -20,7 +20,7 @@ DOC = f"""
     Description: {description}.
 """
 
-runner = bentoml.sklearn.get(f"{model_name}:latest").to_runner()
+runner = bentoml.mlflow.get(f"{model_name}:latest").to_runner()
 svc = bentoml.Service(f"{model_name}_service", runners=[runner])
 Input = JSON.from_sample(inputs_example)
 
@@ -38,4 +38,4 @@ def predict_bentoml(input_data: List[Dict]) -> Dict[str, float]:
     if isinstance(input_data, Dict):
         input_data = [input_data]
     input_df = pandas.DataFrame(input_data)
-    return {"prediction": runner.predict_proba.run(input_df)[:, 1]}
+    return {"prediction": runner.predict.run(input_df)}

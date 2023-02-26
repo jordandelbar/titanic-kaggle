@@ -1,6 +1,8 @@
 """Train the model."""
 import mlflow
 import pandas
+from config.core import config
+from model_definition.sklearn_model_pipeline import titanic_pipeline
 from sklearn.pipeline import Pipeline
 from zenml.client import Client
 from zenml.integrations.mlflow.experiment_trackers import MLFlowExperimentTracker
@@ -8,9 +10,6 @@ from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
     MLFlowExperimentTrackerSettings,
 )
 from zenml.steps import Output, step
-
-from titanic_model.config.core import config
-from titanic_model.model_definition.sklearn_model_pipeline import titanic_pipeline
 
 experiment_tracker = Client().active_stack.experiment_tracker
 

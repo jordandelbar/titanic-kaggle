@@ -1,9 +1,8 @@
 """Preprocess the data."""
 import numpy
 import pandas
+from config.core import config
 from zenml.steps import Output, step
-
-from titanic_model.config.core import config
 
 
 @step

@@ -2,17 +2,19 @@
 import json
 import os
 from pathlib import Path
-from typing import Dict
 
 import bentoml
-from sklearn.pipeline import Pipeline
+import mlflow.pyfunc
+from model_registry.mlflow_client_deploying import (
+    get_inputs_example,
+    get_meta,
+    get_requirements_path,
+)
 from zenml.steps import step
 
 
 @step
-def bento_builder(
-    model: Pipeline, model_metadata: Dict, model_requirements: str
-) -> None:
+def bento_builder() -> None:
     """Save a bentoml model and build a bento service from that model.
 
     Args:
@@ -23,15 +25,32 @@ def bento_builder(
     Returns:
         None
     """
+    model_name = "titanic_model"  # TODO: config
+    stage = "Production"  # TODO: config
+
+    mlflow.pyfunc.load_model(model_uri=f"models:/{model_name}/{stage}")
+    model_requirements = get_requirements_path(
+        model_uri=f"models:/{model_name}/{stage}"
+    )
+    model_inputs_example = get_inputs_example(model_name=model_name, stage=stage)
+    model_metadata = get_meta(model_name=model_name, stage=stage)
+
+    model_metadata = {
+        "bento_model_name": model_metadata.name,
+        "mlflow_model_version": model_metadata.version,
+        "mlflow_model_stage": model_metadata.current_stage,
+        "inputs_example": model_inputs_example,
+    }
+
     bento_model_name = model_metadata["bento_model_name"]
     bentoml_service_name = f"{bento_model_name}_service"
-    signatures = {"predict_proba": {"batchable": True, "batch_dim": 0}}
+    signatures = {"predict": {"batchable": True, "batch_dim": 0}}
 
     # Saving bentoml model
-    bentoml.sklearn.save_model(
-        model=model,
-        signatures=signatures,
+    bentoml.mlflow.import_model(
         name=bento_model_name,
+        model_uri=f"models:/{model_name}/{stage}",
+        signatures=signatures,
     )
 
     # Persist model metadata into bento workdir

@@ -2,18 +2,17 @@
 from typing import Dict
 
 import mlflow
+from config.core import config
+from model_registry.mlflow_client_training import (
+    promote_models,
+    registering_model_decision,
+)
 from zenml.client import Client
 from zenml.integrations.mlflow.experiment_trackers import MLFlowExperimentTracker
 from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
     MLFlowExperimentTrackerSettings,
 )
 from zenml.steps import step
-
-from titanic_model.config.core import config
-from titanic_model.model_registry.mlflow_client_training import (
-    promote_models,
-    registering_model_decision,
-)
 
 experiment_tracker = Client().active_stack.experiment_tracker
 
