@@ -52,11 +52,13 @@ def model_evaluator(
     y_predict_proba = model.predict_proba(model_input=X_test, context="")
 
     metrics = {
-        "precision": precision_score(y_true=y_test, y_pred=y_predict),
-        "recall": recall_score(y_true=y_test, y_pred=y_predict),
-        "f1 score": f1_score(y_true=y_test, y_pred=y_predict),
-        "accuracy": accuracy_score(y_true=y_test, y_pred=y_predict),
-        "roc auc score": roc_auc_score(y_true=y_test, y_score=y_predict_proba),
+        "precision": precision_score(y_true=y_test.to_numpy(), y_pred=y_predict),
+        "recall": recall_score(y_true=y_test.to_numpy(), y_pred=y_predict),
+        "f1 score": f1_score(y_true=y_test.to_numpy(), y_pred=y_predict),
+        "accuracy": accuracy_score(y_true=y_test.to_numpy(), y_pred=y_predict),
+        "roc auc score": roc_auc_score(
+            y_true=y_test.to_numpy(), y_score=y_predict_proba
+        ),
     }
     mlflow.log_metrics(metrics=metrics)
     return metrics

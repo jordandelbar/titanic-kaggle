@@ -39,6 +39,7 @@ protobuf = "^3.7.0"
 bentoml = "^1.0.15"
 numba = "^0.56.4"
 kaggle = "^1.5.12"
+polars = "^0.16.8"
 
 
 [tool.poetry.group.dev.dependencies]
