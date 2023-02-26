@@ -1,4 +1,5 @@
 """Run the training pipeline."""
+from mlflow_python_model_materializer import PythonModelMaterializer
 from pipelines.training_pipeline import training_pipeline
 from steps.data_loader.pandas_data_loader import data_loader
 from steps.data_processing.pandas_processing import preprocessor
@@ -11,7 +12,7 @@ run = training_pipeline(
     loader=data_loader(),
     preprocessor=preprocessor(),
     splitter=data_splitter(),
-    trainer=trainer(),
+    trainer=trainer().configure(output_materializers=PythonModelMaterializer),
     evaluator=model_evaluator(),
     register=model_register(),
 )

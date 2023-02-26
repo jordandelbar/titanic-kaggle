@@ -6,7 +6,6 @@ import numpy
 import pandas
 import torch
 from config.core import config
-from sklearn.pipeline import Pipeline
 from zenml.client import Client
 from zenml.integrations.mlflow.experiment_trackers import MLFlowExperimentTracker
 from zenml.integrations.mlflow.flavors.mlflow_experiment_tracker_flavor import (
@@ -32,7 +31,7 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
 )
 def trainer(
     X_train: pandas.DataFrame, y_train: pandas.Series
-) -> Output(clf_pipeline=Pipeline):
+) -> Output(model=mlflow.pyfunc.PythonModel):
     """Train the model on the training dataframe.
 
     Args:
