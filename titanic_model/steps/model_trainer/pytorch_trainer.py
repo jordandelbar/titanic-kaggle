@@ -1,9 +1,10 @@
 """Train the model."""
-from typing import List
+import logging
+from typing import List, Union
 
 import mlflow
 import numpy
-import pandas
+import polars
 import torch
 from config.core import config
 from zenml.client import Client
@@ -30,7 +31,7 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
     settings={"experiment_tracker.mlflow": mlflow_settings},
 )
 def trainer(
-    X_train: pandas.DataFrame, y_train: pandas.Series
+    X_train: polars.DataFrame, y_train: polars.Series
 ) -> Output(model=mlflow.pyfunc.PythonModel):
     """Train the model on the training dataframe.
 
@@ -41,121 +42,146 @@ def trainer(
         clf_pipeline(sklearn.pipeline.Pipeline): classifier sklearn pipeline
     """
     mlflow.log_dict(config.dict(), "model_config.json")
-    # mlflow.sklearn.autolog(log_input_examples=True)
 
-    class TargetEncoding:
-        """Target encoding."""
-
-        def __init__(self, m: int):
+    class TargetEncoder:
+        def __init__(self, smoothing: int, features_to_encode: Union[str, List]):
             """Init.
 
             Args:
-                m (int): weight for the overall mean
+                smoothing (int): smoothing to apply
+                features_to_encode (list): list of features to encode
             """
+            self.smoothing = smoothing
+            self.features_to_encode = features_to_encode
+            self.global_mean = None
             self.mapping = dict()
-            self.m = m
 
-        def fit(self, x: pandas.DataFrame, y: pandas.Series, features_list: List):
-            """Fit.
-
-            Args:
-                x (pandas.DataFrame): feature dataset
-                y (pandas.Series): target dataset
-                features_list (list): list of features to target encode
-            """
-            x = x.copy()
-            # Compute the global mean
-            mean = y.mean()
-
-            x["target"] = y
-
-            # Compute the number of values and the mean of each group
-            for feature in features_list:
-                agg = x.groupby(feature)["target"].agg(["count", "mean"])
-                counts = agg["count"]
-                means = agg["mean"]
-
-                # Compute the "smoothed" means
-                smooth = (counts * means + self.m * mean) / (counts + self.m)
-
-                # Replace each value by the according smoothed mean
-                self.mapping[feature] = smooth
-            return "Added to the mapping"
-
-        def transform(self, x):
-            """Transform.
+        def fit(
+            self, x: polars.DataFrame, y: Union[polars.Series, polars.DataFrame]
+        ) -> None:
+            """Fit the target encoder.
 
             Args:
-                x (pandas.DataFrame): feature dataset
+                x (polars.DataFrame): features table
+                y (y: Union[polars.Series, polars.DataFrame]): target
 
             Returns:
-                pandas.DataFrame: transformed dataset
+                None
             """
-            x = x.copy()
+            if isinstance(y, polars.DataFrame):
+                on = y.columns[0]
+            else:
+                on = y.absname
+
+            x = x.with_columns(y)
+
+            # Compute the global mean
+            mean = x[on].mean()
+            self.global_mean = mean
+
+            if isinstance(self.features_to_encode, str):
+                self.features_to_encode = [self.features_to_encode]
+
+            for feature in self.features_to_encode:
+                # Compute the count and mean of each group
+                agg = x.groupby(feature).agg(
+                    [
+                        polars.count().cast(polars.Float64),
+                        polars.col(on).mean().cast(polars.Float64).alias("mean"),
+                    ]
+                )
+                # Compute the smoothed mean
+                smooth = agg.with_columns(
+                    encoding=(
+                        polars.col("count") * polars.col("mean") + self.smoothing * mean
+                    )
+                    / (polars.col("count") + self.smoothing)
+                ).select([polars.col(feature), polars.col("encoding")])
+                self.mapping[feature] = {
+                    "table": smooth.to_dict(as_series=False),
+                    "dtype": x.get_column(feature).dtype,
+                }
+            return None
+
+        def transform(self, x: polars.DataFrame) -> polars.DataFrame:
+            features_with_unseen = list()
             for feature in self.mapping.keys():
-                x[feature] = x[feature].map(self.mapping[feature])
-
-                if x[feature].isnull().any():
-                    print(f"{feature} has unseen categories")
-                    x[feature] = x[feature].fillna(x[feature].mean())
-
+                mapping_table = polars.from_dict(self.mapping[feature]["table"])
+                mapping_table = mapping_table.with_columns(
+                    polars.col(feature).cast(self.mapping[feature]["dtype"])
+                )
+                temp = x.join(mapping_table, on=feature, how="left")
+                x = temp.replace(feature, temp["encoding"]).select(x.columns)
+                # Handling of unseen data
+                if x.select(polars.col(feature).is_null().any()).to_numpy().squeeze():
+                    features_with_unseen.append(feature)
+                    x = x.with_columns(
+                        polars.col(feature).fill_null(self.global_mean).alias(feature)
+                    )
+            if features_with_unseen:
+                logging.debug(
+                    f"""Feature(s) {features_with_unseen} has unseen values,
+                      defaults to global mean"""
+                )
             return x
 
-        def fit_transform(self, x, y, features_list):
-            """Fit & transform.
-
-            Args:
-                x (pandas.DataFrame): feature dataset
-                y (pandas.Series): target dataset
-                features_list (list): list of features to target encode
-
-            Returns:
-                pandas.DataFrame: transformed dataset
-            """
-            self.fit(x=x, y=y, features_list=features_list)
+        def fit_transform(
+            self, x: polars.DataFrame, y: Union[polars.Series, polars.DataFrame]
+        ) -> polars.DataFrame:
+            self.fit(x=x, y=y)
             return self.transform(x=x)
 
     class MeanImputer:
-        """Mean imputing."""
+        def __init__(self, features_to_impute: List):
+            """Init.
 
-        def __init__(self):
-            """Init."""
+            Args:
+                features_to_impute (list): list of feature to impute
+            """
+            self.features_to_impute = features_to_impute
             self.mapping = dict()
 
-        def fit(self, x, features_list):
+        def fit(self, x: polars.DataFrame):
             """Fit.
 
             Args:
-                x (pandas.DataFrame): feature dataset
-                features_list (list): list of features to mean impute
-            """
-            for feature in features_list:
-                self.mapping[feature] = x[feature].mean()
+                x (polars.DataFrame): feature dataset
 
-        def transform(self, x):
+            Returns:
+                None
+            """
+            for features in self.features_to_impute:
+                self.mapping[features] = x[features].mean()
+            return None
+
+        def transform(self, x: polars.DataFrame):
             """Transform.
 
             Args:
-                x (pandas.DataFrame): feature dataset
+                x (polars.DataFrame): feature dataset
 
             Returns:
-                pandas.DataFrame: transformed dataset
+                polars.DataFrame: transformed dataset
             """
             for feature in self.mapping.keys():
-                x[feature] = x[feature].fillna(self.mapping[feature])
+                x = x.with_columns(
+                    polars.col(feature).fill_null(
+                        polars.lit(self.mapping[feature]),
+                    )
+                )
             return x
 
-        def fit_transform(self, x, features_list):
+        def fit_transform(self, x: polars.DataFrame):
             """Fit & transform.
 
             Args:
-                x (pandas.DataFrame): feature dataset
+                x (polars.DataFrame): feature dataset
                 features_list (list): list of features to mean impute
 
             Returns:
-                pandas.DataFrame: transformed dataset
+                polars.DataFrame: transformed dataset
             """
-            self.fit(x=x, features_list=features_list)
+            self.fit(x=x)
             return self.transform(x=x)
 
     class LogisticRegression(torch.nn.Module):
@@ -172,10 +198,10 @@ def trainer(
 
             Args:
                 input_dim (int): input dimension
-                output_dim (_type_): output dimension
-                epochs (int, optional): Number of training epochs. Defaults to 5000.
-                loss_func (_type_, optional): Loss function.
-                             Defaults to torch.nn.BCELoss().
+                output_dim (int): output dimension
+                epochs (int, optional): Number of training epochs.
+                                        Defaults to 5000.
+                loss_func: Loss function.
             """
             super(LogisticRegression, self).__init__()
             self.input_dim = input_dim
@@ -190,9 +216,18 @@ def trainer(
             y_pred = torch.sigmoid(self.linear(x))
             return y_pred
 
-        def fit(self, x: pandas.DataFrame, y: pandas.Series):
-            """Fit function to accomodate sklearn pipeline API."""
-            y = y.to_numpy()
+        def fit(self, x: polars.DataFrame, y: polars.Series):
+            """Fit.
+
+            Args:
+                x (polars.DataFrame): training dataframe
+                y (polars.Series): target series
+
+            Returns:
+                None
+            """
+            x = x.to_numpy()
+            y = y.to_numpy().squeeze()
 
             x = torch.from_numpy(x.astype(numpy.float32))
             y = torch.from_numpy(y.astype(numpy.float32))[:, None]
@@ -212,10 +247,18 @@ def trainer(
                 self.optimizer.step()
                 iter += 1
                 if iter % 500 == 0:
-                    print("epoch {}, loss {}".format(epoch, loss.item()))
+                    print(f"epoch {epoch}, loss {loss.item()}")
+            return None
 
-        def predict_proba(self, x):
-            """Return probability of class."""
+        def predict_proba(self, x: numpy.ndarray):
+            """Return probability of class.
+
+            Args:
+                x (numpy.ndarray): dataframe to infer
+
+            Returns:
+                numpy.ndarray: probability of survival
+            """
             x = torch.from_numpy(x.astype(numpy.float32))
 
             y_proba = self.forward(x)
@@ -225,9 +268,8 @@ def trainer(
             """Predict survival score.
 
             Args:
-                x (numpy.ndarray): features
-                threshold (float, optional): Threshold to determine label.
-                                             Defaults to 0.5.
+                x (numpy.ndarray): dataframe to infer
+                threshold (float): threshold to apply for classes
 
             Returns:
                 numpy.ndarray: score prediction
@@ -237,18 +279,10 @@ def trainer(
             y_pred[y_pred <= threshold] = 0
             return y_pred
 
-        def fit_transform(self, x, y):
-            """Fit & transform to accomodate sklearn pipeline API."""
-            self.fit(x, y)
-            return self.predict(x)
-
-    mean_imputer = MeanImputer()
-    target_encoder = TargetEncoding(m=300)
-    clf = LogisticRegression(input_dim=9, output_dim=1, epochs=5000)
-    x = target_encoder.fit_transform(
-        x=X_train,
-        y=y_train,
-        features_list=[
+    mean_imputer = MeanImputer(features_to_impute=["Age", "Fare"])
+    target_encoder = TargetEncoder(
+        smoothing=300,
+        features_to_encode=[
             "Sex",
             "Embarked",
             "Pclass",
@@ -258,8 +292,13 @@ def trainer(
             "title",
         ],
     )
-    x = mean_imputer.fit_transform(x=x, features_list=["Age"])
-    clf.fit(x=x.to_numpy(), y=y_train)
+    clf = LogisticRegression(input_dim=9, output_dim=1, epochs=5000)
+    x = target_encoder.fit_transform(
+        x=X_train,
+        y=y_train,
+    )
+    x = mean_imputer.fit_transform(x=x)
+    clf.fit(x=x, y=y_train)
 
     class CustomModel(mlflow.pyfunc.PythonModel):
         def __init__(self, mean_imputer, target_encoder, clf):
@@ -284,7 +323,9 @@ def trainer(
     mlflow.pyfunc.log_model(
         python_model=model,
         artifact_path="model",
-        input_example=X_train.loc[0].to_dict(),
+        input_example={
+            key: info[0] for key, info in X_train[0, :].to_dict(as_series=False).items()
+        },
     )
 
     return model

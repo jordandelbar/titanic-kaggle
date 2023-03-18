@@ -1,5 +1,4 @@
 """Split the data in train/test sets."""
-import pandas
 import polars
 from config.core import config
 from sklearn.model_selection import train_test_split
@@ -10,10 +9,10 @@ from zenml.steps import Output, step
 def data_splitter(
     train: polars.DataFrame, target: polars.DataFrame
 ) -> Output(
-    X_train=pandas.DataFrame,
-    X_test=pandas.DataFrame,
-    y_train=pandas.DataFrame,
-    y_test=pandas.DataFrame,
+    X_train=polars.DataFrame,
+    X_test=polars.DataFrame,
+    y_train=polars.DataFrame,
+    y_test=polars.DataFrame,
 ):
     """Split the data into training and testing dataframes.
 
@@ -32,8 +31,8 @@ def data_splitter(
     )
 
     return (
-        X_train.to_pandas(),
-        X_test.to_pandas(),
-        y_train.to_pandas(),
-        y_test.to_pandas(),
+        X_train,
+        X_test,
+        y_train,
+        y_test,
     )

@@ -2,7 +2,7 @@
 from typing import Dict
 
 import mlflow
-import pandas
+import polars
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -35,8 +35,8 @@ mlflow_settings = MLFlowExperimentTrackerSettings(
 )
 def model_evaluator(
     model: mlflow.pyfunc.PythonModel,
-    X_test: pandas.DataFrame,
-    y_test: pandas.Series,
+    X_test: polars.DataFrame,
+    y_test: polars.Series,
 ) -> Output(metrics=Dict):
     """Evaluate model training.
 
