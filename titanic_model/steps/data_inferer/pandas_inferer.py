@@ -3,9 +3,8 @@ import os
 
 import pandas
 import requests
+from utils.files_management import return_datasets_path
 from zenml.steps import Output, step
-
-from titanic_model.utils.files_management import return_datasets_path
 
 
 @step

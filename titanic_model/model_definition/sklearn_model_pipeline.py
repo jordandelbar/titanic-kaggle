@@ -1,12 +1,11 @@
 """Model definition."""
+from config.core import config
 from feature_engine.encoding import MeanEncoder, RareLabelEncoder
 from feature_engine.imputation import CategoricalImputer, MeanMedianImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
-
-from titanic_model.config.core import config
 
 titanic_pipeline = Pipeline(
     [

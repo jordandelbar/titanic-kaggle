@@ -1,9 +1,8 @@
 """Split the data in train/test sets."""
 import polars
+from config.core import config
 from sklearn.model_selection import train_test_split
 from zenml.steps import Output, step
-
-from titanic_model.config.core import config
 
 
 @step
@@ -31,4 +30,9 @@ def data_splitter(
         train, target, test_size=config.test_size, random_state=config.random_state
     )
 
-    return X_train, X_test, y_train, y_test
+    return (
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+    )

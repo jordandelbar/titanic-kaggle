@@ -1,9 +1,8 @@
 """Split the data in train/test sets."""
 import pandas
+from config.core import config
 from sklearn.model_selection import train_test_split
 from zenml.steps import Output, step
-
-from titanic_model.config.core import config
 
 
 @step

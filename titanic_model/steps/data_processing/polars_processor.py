@@ -1,8 +1,7 @@
 """Preprocess the data."""
 import polars
+from config.core import config
 from zenml.steps import Output, step
-
-from titanic_model.config.core import config
 
 
 @step
@@ -17,7 +16,11 @@ def preprocessor(X: polars.DataFrame) -> Output(X_pp=polars.DataFrame):
     """
     # Is the passenger a baby
     X = X.with_columns(
-        polars.when(polars.col("Age") < 5).then(1).otherwise(0).alias("is_baby")
+        polars.when(polars.col("Age") < 5)
+        .then(1)
+        .otherwise(0)
+        .alias("is_baby")
+        .cast(polars.Int64)
     )
 
     # Was the passenger travelling alone
@@ -26,6 +29,7 @@ def preprocessor(X: polars.DataFrame) -> Output(X_pp=polars.DataFrame):
         .then(1)
         .otherwise(0)
         .alias("alone")
+        .cast(polars.Int64)
     )
 
     # Family member total
