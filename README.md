@@ -341,6 +341,8 @@ MLFLOW_TRACKING_PASSWORD=<your-mlflow-password>
 # Web Service URL for inference
 # On your local machine: http://localhost:3000/titanic_model/
 WEB_SERVICE_URL=<your-web-service-url>
+# Setting up the repository root (the titanic-kaggle folder)
+ZENML_REPOSITORY_PATH=<your-zenml-repository-path>
 # Setting up the python path
 PYTHONPATH=.
 ```
@@ -361,16 +363,25 @@ To spin up a ZenML server on your local machine you can run:
 zenml up --docker
 ```
 
-And then connect to it by running:
+Another easy way to run a ZenML server is to set-up a [HuggingFace space](https://huggingface.co/docs/hub/spaces-sdks-docker-zenml)
+
+You can initialize the zenml repository by running:
+```bash
+zenml init
+```
+
+You can connect to the server by running:
 ```bash
 zenml connect --url=$ZENML_SERVER_URL \
 --username=$ZENML_USERNAME \
 --password=$ZENML_PASSWORD
 ```
 
-Once connected to your ZenML server you will have to register a secrets-manager to keep your experiment-tracker secrets in a safe place:
+Once connected to your ZenML server you will have to register your secret for the experiment tracker:
 ```bash
-zenml secrets-manager register <your-secrets-manager-name> --flavor=local
+zenml secret create $mlflow_secret_name \
+    --username=$MLFLOW_TRACKING_USERNAME \
+    --password=$MLFLOW_TRACKING_PASSWORD
 ```
 
 You can then create a new experiment-tracker component:
@@ -387,19 +398,11 @@ zenml stack register <your-new-stack-name> \
 -o default \
 -a default \
 -e <your-experiment-tracker-component-name> \
--x <your-secrets-manager-name>
 ```
 
 You can then activate that stack by running:
 ```bash
 zenml stack set <your-new-stack-name>
-```
-
-After activating your stack, you need to create a secret for it, linked to your secret manager:
-```bash
-zenml secrets-manager secret register <your-mlflow-secret-name> \
---username=$MLFLOW_TRACKING_USERNAME \
---password=$MLFLOW_TRACKING_PASSWORD
 ```
 
 You can also simply use this script which runs all the aforementioned steps

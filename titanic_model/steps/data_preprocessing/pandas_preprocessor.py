@@ -36,6 +36,6 @@ def preprocessor(X: pandas.DataFrame) -> Output(X_pp=pandas.DataFrame):
     X["title"] = X["title"].replace("Dona", "Mrs")
 
     # Drop features not useful anymore
-    X.drop(config.features_to_drop, axis=1, inplace=True)
+    X = X.drop(config.features_to_drop, axis=1)
 
     return X

@@ -1,11 +1,8 @@
 """Infer the data to the service."""
-import os
-
 import pandas
-import requests
 from zenml.steps import Output, step
 
-from titanic_model.utils.files_management import return_datasets_path
+from titanic_model.utils import get_api_response, return_datasets_path
 
 
 @step
@@ -18,11 +15,10 @@ def inferer(test: pandas.DataFrame) -> Output(infered_test=pandas.DataFrame):
     Returns:
         infered_test (pandas.DataFrame): test data with predicted column added
     """
-    url = os.getenv("WEB_SERVICE_URL")
-    data = test.to_json(orient="records")
-    response_data = requests.post(url=url, data=data)
-    test["surviving_probability_prediction"] = response_data.json()["prediction"]
+    final = test.copy()
+    final["prediction"] = ""
+    final["prediction"] = test.apply(get_api_response, axis=1)
 
-    test.to_csv(return_datasets_path() / "infered_test.csv")
+    final.to_csv(return_datasets_path() / "infered_test.csv")
 
-    return test
+    return final
