@@ -3,7 +3,7 @@ import pandas
 from zenml.steps import Output, step
 
 from titanic_model.config.core import config
-from titanic_model.utils.files_management import (
+from titanic_model.utils import (
     check_if_files_exists,
     download_files_from_kaggle,
     return_datasets_path,
@@ -11,8 +11,8 @@ from titanic_model.utils.files_management import (
 
 
 @step
-def data_loader() -> Output(
-    train=pandas.DataFrame, target=pandas.Series, test=pandas.DataFrame
+def data_loader() -> (
+    Output(train=pandas.DataFrame, target=pandas.Series, test=pandas.DataFrame)
 ):
     """Load the data from titanic files.
 
