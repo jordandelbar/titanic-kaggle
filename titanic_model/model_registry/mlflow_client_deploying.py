@@ -83,13 +83,7 @@ def get_model(model_name: str, stage: str) -> Any:
         Any: model
     """
     version_meta = get_meta(model_name=model_name, stage=stage)
-    # run_id = version_meta.run_id
     model_uri = version_meta.source
-
-    # run = mlflow.get_run(run_id=run_id)
-    # run_data = json.loads(run.data.tags["mlflow.log-model.history"])[0]
-    # loader_module = run_data["flavors"]["python_function"]["loader_module"]
-    # importlib.import_module(loader_module)
     model = mlflow.sklearn.load_model(model_uri)
 
     return model
